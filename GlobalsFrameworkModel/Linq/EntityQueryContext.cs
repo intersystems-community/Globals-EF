@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using GlobalsFramework.Access;
 using GlobalsFramework.Linq.ExpressionProcessing;
+using GlobalsFramework.Linq.Helpers;
 using GlobalsFramework.Utils.TypeDescription;
 using InterSystems.Globals;
 

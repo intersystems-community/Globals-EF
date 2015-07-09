@@ -70,7 +70,7 @@
     <Compile Include="Linq\EntityQueryContext.cs" />
     <Compile Include="Linq\ExpressionCaching\CompiledExpressionStorage.cs" />
     <Compile Include="Linq\ExpressionCaching\ExpressionHashCodeCalculator.cs" />
-    <Compile Include="Linq\ExpressionHelper.cs" />
+    <Compile Include="Linq\Helpers\ExpressionHelper.cs" />
     <Compile Include="Linq\ExpressionProcessing\BinaryExpressionProcessor.cs" />
     <Compile Include="Linq\ExpressionProcessing\CallExpressionProcessor.cs" />
     <Compile Include="Linq\ExpressionProcessing\ConditionalExpressionProcessor.cs" />
