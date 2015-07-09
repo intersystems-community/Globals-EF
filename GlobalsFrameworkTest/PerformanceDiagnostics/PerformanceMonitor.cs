@@ -267,6 +267,13 @@ namespace GlobalsFrameworkTest.PerformanceDiagnostics
             var res = context.ADbSet.Where(i => !i.C.Value).Select(item => item.C).ToList();
         }
 
+        [PerfWatch]
+        private static void TypeAsExpression(TestDataContext context)
+        {
+            object testC = new TestC();
+            var res = context.ADbSet.Where(i => (testC as TestC?) != null).Select(item => item.C).ToList();
+        }
+
         #endregion
     }
 }

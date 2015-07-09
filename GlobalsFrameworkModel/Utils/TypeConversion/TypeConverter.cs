@@ -8,7 +8,7 @@ namespace GlobalsFramework.Utils.TypeConversion
     {
         private static readonly TypeConverter ConverterInstance = new TypeConverter();
 
-        private readonly ConcurrentDictionary<int, MethodInfo> _cachedConverters = new ConcurrentDictionary<int, MethodInfo>(); 
+        private readonly ConcurrentDictionary<int, MethodInfo> _cachedMethods = new ConcurrentDictionary<int, MethodInfo>(); 
 
         private TypeConverter() { }
 
@@ -26,7 +26,7 @@ namespace GlobalsFramework.Utils.TypeConversion
 
             try
             {
-                return InvokeConverter(value, GetOrAddCachedConverter(type, "ConvertChecked"));
+                return InvokeMethod(value, GetOrAddCachedMethod(type, "ConvertChecked"));
             }
             catch (TargetInvocationException e)
             {
@@ -43,7 +43,17 @@ namespace GlobalsFramework.Utils.TypeConversion
 
             var type = Nullable.GetUnderlyingType(targetType) ?? targetType;
 
-            return InvokeConverter(value, GetOrAddCachedConverter(type, "ConvertUnchecked"));
+            return InvokeMethod(value, GetOrAddCachedMethod(type, "ConvertUnchecked"));
+        }
+
+        internal object TypeAsOperation(object value, Type targetType)
+        {
+            return value == null ? null : InvokeMethod(value, GetOrAddCachedMethod(targetType, "TypeAsOperation"));
+        }
+
+        internal object TypeIsOperation(object value, Type targetType)
+        {
+            return InvokeMethod(value, GetOrAddCachedMethod(targetType, "TypeIsOperation"));
         }
 
         //ReSharper disable once UnusedMember.Local
@@ -59,35 +69,49 @@ namespace GlobalsFramework.Utils.TypeConversion
             return checked((T)value);
         }
 
-        private object InvokeConverter(object value, MethodInfo converter)
+        //ReSharper disable once UnusedMember.Local
+        //method is called via reflection
+        private static T TypeAsOperation<T>(object obj)
         {
-            return converter.Invoke(this, new[] {value});
+            return obj is T ? (T)obj : default(T);
         }
 
-        private MethodInfo GetOrAddCachedConverter(Type targetType, string converterName)
+        //ReSharper disable once UnusedMember.Local
+        //method is called via reflection
+        private static bool TypeIsOperation<T>(object obj)
         {
-            var hash = GetConverterHashCode(targetType, converterName);
+            return obj is T;
+        }
+
+        private object InvokeMethod(object value, MethodInfo method)
+        {
+            return method.Invoke(this, new[] {value});
+        }
+
+        private MethodInfo GetOrAddCachedMethod(Type targetType, string methodName)
+        {
+            var hash = GetMethodHashCode(targetType, methodName);
             MethodInfo convertor;
 
-            if (_cachedConverters.TryGetValue(hash, out convertor)) 
+            if (_cachedMethods.TryGetValue(hash, out convertor)) 
                 return convertor;
 
-            convertor = GetConverter(targetType, converterName);
-            _cachedConverters.TryAdd(hash, convertor);
+            convertor = GetMethodConverter(targetType, methodName);
+            _cachedMethods.TryAdd(hash, convertor);
 
             return convertor;
         }
 
-        private MethodInfo GetConverter(Type targeType, string converterName)
+        private MethodInfo GetMethodConverter(Type targeType, string methodName)
         {
-            return GetType().GetMethod(converterName,
+            return GetType().GetMethod(methodName,
                 BindingFlags.NonPublic | BindingFlags.Static)
                 .MakeGenericMethod(targeType);
         }
 
-        private int GetConverterHashCode(Type targetType, string converterName)
+        private int GetMethodHashCode(Type targetType, string methodName)
         {
-            return string.Format("_m{0}<{1}>", converterName, targetType).GetHashCode();
+            return string.Format("_m{0}<{1}>", methodName, targetType).GetHashCode();
         }
     }
 }

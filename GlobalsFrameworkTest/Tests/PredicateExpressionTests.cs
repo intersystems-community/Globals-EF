@@ -675,12 +675,32 @@ namespace GlobalsFrameworkTest.Tests
                 var result1 = context.ADbSet.Where(i => !i.C.Value).Count();
                 Assert.AreEqual(1, result1);
 
-                var result2 = context.ADbSet.Where(i => !(i.Id >= 0)).Count();
+                var result2 = context.ADbSet.Where(i => !(i.TestBProperty.Id >= 0)).Count();
                 Assert.AreEqual(0, result2);
 
                 var b = false;
                 var result3 = context.ADbSet.Where(i => !b).Count();
                 Assert.AreEqual(1, result3);
+            }
+        }
+
+        [Test]
+        public void TestTypeAsExpression()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.Where(i => (i as TestA).TestBProperty.Id >= 0).Count();
+                Assert.AreEqual(1, result1);
+
+                var result2 = context.ADbSet.Where(i => (i.TestBProperty.Id.Value as int?) == i.TestBProperty.Id).Count();
+                Assert.AreEqual(1, result2);
+
+                object testC = new TestC();
+                var result3 = context.ADbSet.Where(i => (testC as TestA) != null).Count();
+                Assert.AreEqual(0, result3);
+
+                var result4 = context.ADbSet.Where(i => (testC as TestC?) != null).Count();
+                Assert.AreEqual(1, result4);
             }
         }
     }

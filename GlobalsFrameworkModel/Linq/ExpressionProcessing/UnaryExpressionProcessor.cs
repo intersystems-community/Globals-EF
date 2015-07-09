@@ -21,6 +21,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
                 case ExpressionType.Negate:
                 case ExpressionType.NegateChecked:
                 case ExpressionType.Not:
+                case ExpressionType.TypeAs:
                     return true;
                 default:
                     return false;
@@ -43,6 +44,8 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
                     return ProcessNegateExpression(expression as UnaryExpression, references, true);
                 case ExpressionType.Not:
                     return ProcessNotExpression(expression as UnaryExpression, references);
+                case ExpressionType.TypeAs:
+                    return ProcessTypeAsExpression(expression as UnaryExpression, references);
                 default:
                     return ProcessingResult.Unsuccessful;
             }
@@ -163,6 +166,29 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             foreach (var value in values)
             {
                 resultList.Add(notOperatorMethod(value));
+            }
+
+            return new ProcessingResult(true, resultList);
+        }
+
+        private static ProcessingResult ProcessTypeAsExpression(UnaryExpression expression, List<NodeReference> references)
+        {
+            var operandResult = PredicateExpressionProcessor.ProcessExpression(expression.Operand, references);
+            if (!operandResult.IsSuccess)
+                return ProcessingResult.Unsuccessful;
+
+            if (operandResult.IsSingleItem)
+            {
+                var value = operandResult.GetLoadedItem(expression.Operand.Type);
+                return new ProcessingResult(true, TypeConverter.Instance.TypeAsOperation(value, expression.Type), true);
+            }
+
+            var values = operandResult.GetLoadedItems(expression.Operand.Type);
+            var resultList = new List<object>();
+
+            foreach (var value in values)
+            {
+                resultList.Add(TypeConverter.Instance.TypeAsOperation(value, expression.Type));
             }
 
             return new ProcessingResult(true, resultList);
