@@ -51,11 +51,6 @@ namespace GlobalsFramework.Utils.TypeConversion
             return value == null ? null : InvokeMethod(value, GetOrAddCachedMethod(targetType, "TypeAsOperation"));
         }
 
-        internal object TypeIsOperation(object value, Type targetType)
-        {
-            return InvokeMethod(value, GetOrAddCachedMethod(targetType, "TypeIsOperation"));
-        }
-
         //ReSharper disable once UnusedMember.Local
         //method is called via reflection
         private static T ConvertUnchecked<T>(dynamic value)
@@ -74,13 +69,6 @@ namespace GlobalsFramework.Utils.TypeConversion
         private static T TypeAsOperation<T>(object obj)
         {
             return obj is T ? (T)obj : default(T);
-        }
-
-        //ReSharper disable once UnusedMember.Local
-        //method is called via reflection
-        private static bool TypeIsOperation<T>(object obj)
-        {
-            return obj is T;
         }
 
         private object InvokeMethod(object value, MethodInfo method)

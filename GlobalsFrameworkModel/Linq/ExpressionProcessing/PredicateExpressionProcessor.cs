@@ -7,7 +7,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 {
     internal static class PredicateExpressionProcessor
     {
-        internal static readonly List<IExpressionProcessor> ExpressionProcessors; 
+        private static readonly List<IExpressionProcessor> ExpressionProcessors; 
 
         static PredicateExpressionProcessor()
         {
@@ -20,7 +20,8 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
                 new ParameterExpressionProcessor(),
                 new UnaryExpressionProcessor(),
                 new ConditionalExpressionProcessor(),
-                new InvokeExpressionProcessor()
+                new InvokeExpressionProcessor(),
+                new TypeIsExpressionProcessor()
             };
         }
 

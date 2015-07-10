@@ -95,6 +95,11 @@ namespace GlobalsFrameworkTest.Data
         public Func<int, int> Func = (i) => i*2;
     }
 
+    public class TestA2 : TestA
+    {
+        public TestA2() : base(0) { }
+    }
+
     public class TestB
     {
         [Column(Name = "Key", IsPrimaryKey = true, IsDbGenerated = true)]
