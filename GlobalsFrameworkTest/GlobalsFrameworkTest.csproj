@@ -53,10 +53,12 @@
     <Compile Include="PerformanceDiagnostics\PerfWatchAttribute.cs" />
     <Compile Include="Tests\DataContextTests.cs" />
     <Compile Include="Data\TestDataContext.cs" />
+    <Compile Include="Tests\EntityValidatorTest.cs" />
     <Compile Include="Tests\PredicateExpressionTests.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\TestDataFactory.cs" />
+    <Compile Include="Tests\PrimaryKeyCalculatorTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -1,8 +1,9 @@
 ﻿using GlobalsFramework.Attributes;
 using GlobalsFramework.Exceptions;
+using GlobalsFramework.Validation;
 using NUnit.Framework;
 
-namespace GlobalsFramework.Validation
+namespace GlobalsFrameworkTest.Tests
 {
     [TestFixture]
     internal class EntityValidatorTest

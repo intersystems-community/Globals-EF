@@ -91,12 +91,10 @@
     <Compile Include="Utils\ConnectionManagement\ConnectionManager.cs" />
     <Compile Include="Utils\ConnectionManagement\ThreadResult.cs" />
     <Compile Include="Utils\PrimaryKeyCalculation\PrimaryKeyCalculator.cs" />
-    <Compile Include="Utils\PrimaryKeyCalculation\PrimaryKeyCalculatorTest.cs" />
     <Compile Include="Utils\TypeConversion\TypeConverter.cs" />
     <Compile Include="Utils\TypeDescription\EntityTypeDescription.cs" />
     <Compile Include="Utils\TypeDescription\EntityTypeDescriptor.cs" />
     <Compile Include="Validation\EntityValidator.cs" />
-    <Compile Include="Validation\EntityValidatorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

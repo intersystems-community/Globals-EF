@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GlobalsFramework.Attributes;
+using GlobalsFramework.Utils.PrimaryKeyCalculation;
 using NUnit.Framework;
 
-namespace GlobalsFramework.Utils.PrimaryKeyCalculation
+namespace GlobalsFrameworkTest.Tests
 {
     [TestFixture]
-    public class PrimaryKeyCalculatorTest
+    internal class PrimaryKeyCalculatorTest
     {
         private static IEnumerable<TestA> InitializeUniqueTestData()
         {
@@ -272,44 +273,40 @@ namespace GlobalsFramework.Utils.PrimaryKeyCalculation
 
             Assert.AreEqual(hashes[0], hashes[1]);
         }
+
+        private class TestA
+        {
+            [Column(IsPrimaryKey = true)]
+            public TestB B { get; set; }
+
+            [Column(IsPrimaryKey = true)]
+            public TestC[] C { get; set; }
+        }
+
+        private class TestB
+        {
+            [Column]
+            public int A { get; set; }
+
+            [Column]
+            public List<TestC> C { get; set; }
+
+            [Column]
+            public TestE? E { get; set; }
+
+        }
+
+        private struct TestC
+        {
+            [Column]
+            public double? D { get; set; }
+
+            public string S { get; set; }
+        }
+
+        private enum TestE
+        {
+            One, Two, Three
+        }
     }
-
-    #region Test classes
-
-    internal class TestA
-    {
-        [Column(IsPrimaryKey = true)]
-        public TestB B { get; set; }
-
-        [Column(IsPrimaryKey = true)]
-        public TestC[] C { get; set; }
-    }
-
-    internal class TestB
-    {
-        [Column]
-        public int A { get; set; }
-
-        [Column]
-        public List<TestC> C { get; set; }
- 
-        [Column]
-        public TestE? E { get; set; }
-
-    }
-
-    internal struct TestC
-    {
-        [Column]
-        public double? D { get; set; }
-
-        public string S { get; set; }
-    }
-
-    internal enum TestE
-    {
-        One, Two, Three
-    }
-
-    #endregion
 }

@@ -6,7 +6,7 @@ using GlobalsFramework.Utils.TypeDescription;
 
 namespace GlobalsFramework.Utils.PrimaryKeyCalculation
 {
-    public static class PrimaryKeyCalculator
+    internal static class PrimaryKeyCalculator
     {
         public static string GetPrimaryKey<TEntity>(TEntity entity)
         {
