@@ -9,38 +9,39 @@ namespace GlobalsFrameworkTest.Tests
     internal class EntityValidatorTest
     {
         [Test]
-        public void TestNotKeys()
+        public void TestWithoutKeys_Throws()
         {
-            Assert.Throws(typeof (EntityValidationException),
-                () => EntityValidator.ValidateDefinitionAndThrow(typeof (TestA)));
+            Assert.Throws<EntityValidationException>(() => EntityValidator.ValidateDefinitionAndThrow(typeof (TestA)));
         }
 
         [Test]
-        public void TestIdentityColumnTypes()
+        public void TestIdentityColumnTypes_Throws()
         {
-            Assert.Throws(typeof(EntityValidationException),
-                () => EntityValidator.ValidateDefinitionAndThrow(typeof(TestB)));
+            Assert.Throws<EntityValidationException>(() => EntityValidator.ValidateDefinitionAndThrow(typeof (TestB)));
         }
 
         [Test]
-        public void TestIdentityAndCustomKeys()
+        public void TestIdentityAndCustomKeys_Throws()
         {
-            Assert.Throws(typeof(EntityValidationException),
-                () => EntityValidator.ValidateDefinitionAndThrow(typeof(TestC)));
+            Assert.Throws<EntityValidationException>(() => EntityValidator.ValidateDefinitionAndThrow(typeof (TestC)));
         }
 
         [Test]
-        public void TestSingleIdentityKey()
+        public void TestSingleIdentityKey_Throws()
         {
-            Assert.Throws(typeof(EntityValidationException),
-                () => EntityValidator.ValidateDefinitionAndThrow(typeof(TestD)));
+            Assert.Throws<EntityValidationException>(() => EntityValidator.ValidateDefinitionAndThrow(typeof (TestD)));
         }
 
         [Test]
-        public void TestInternalClass()
+        public void TestInternalClass_Throws()
         {
-            Assert.Throws(typeof(EntityValidationException),
-                () => EntityValidator.ValidateDefinitionAndThrow(typeof(TestE)));
+            Assert.Throws<EntityValidationException>(() => EntityValidator.ValidateDefinitionAndThrow(typeof(TestE)));
+        }
+
+        [Test]
+        public void TestInternalClass_DoesNotThrow()
+        {
+            Assert.DoesNotThrow(() => EntityValidator.ValidateDefinitionAndThrow(typeof(Data.TestA)));
         }
         
         private class TestA
