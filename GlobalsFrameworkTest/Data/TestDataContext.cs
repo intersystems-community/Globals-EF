@@ -98,6 +98,8 @@ namespace GlobalsFrameworkTest.Data
     public class TestA2 : TestA
     {
         public TestA2() : base(0) { }
+
+        public TestA2(Predicate<int> predicate, TestA a) : base(0) { }
     }
 
     public class TestB

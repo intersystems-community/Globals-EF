@@ -21,7 +21,8 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
                 new UnaryExpressionProcessor(),
                 new ConditionalExpressionProcessor(),
                 new InvokeExpressionProcessor(),
-                new TypeIsExpressionProcessor()
+                new TypeIsExpressionProcessor(),
+                new NewExpressionProcessor()
             };
         }
 

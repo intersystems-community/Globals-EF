@@ -31,9 +31,9 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             return CallProcessingHelper.ProcessCall(argumentsResults, delegateResult, (del, arguments) =>
             {
                 var delegateInstance = del as Delegate;
-                return delegateInstance == null
-                    ? ProcessingResult.Unsuccessful
-                    : new ProcessingResult(true, delegateInstance.DynamicInvoke(arguments));
+                return delegateInstance != null
+                    ? new ProcessingResult(true, delegateInstance.DynamicInvoke(arguments))
+                    : ProcessingResult.Unsuccessful;
             });
         }
     }
