@@ -287,6 +287,18 @@ namespace GlobalsFrameworkTest.PerformanceDiagnostics
             var res = context.ADbSet.Where(i => new TestA(0) != null).Select(item => item.C).ToList();
         }
 
+        [PerfWatch]
+        private static void NewArrayBoundsExpression(TestDataContext context)
+        {
+            var res = context.ADbSet.Where(i => new int[2] != null).Select(item => item.C).ToList();
+        }
+
+        [PerfWatch]
+        private static void NewArrayInitExpression(TestDataContext context)
+        {
+            var res = context.ADbSet.Where(i => new[] {2, 3} != null).Select(item => item.C).ToList();
+        }
+
         #endregion
     }
 }
