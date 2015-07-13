@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using GlobalsFrameworkTest.Data;
 using NUnit.Framework;
 
@@ -419,6 +418,8 @@ namespace GlobalsFrameworkTest.Tests
 
                 var result7 = context.ADbSet.Where(i => i.TestBProperty.Array.LongLength == 2).Count();
                 Assert.AreEqual(0, result7);
+
+                Assert.Throws<NullReferenceException>(() => context.ADbSet.Where(i => i.List[1].Array.Length > 0).Count());
             }
         }
 
@@ -504,7 +505,7 @@ namespace GlobalsFrameworkTest.Tests
                 var result2 = context.ADbSet.Where(i => (i.C2 != null) && (nullableC.Value.Id > 0)).Count();
                 Assert.AreEqual(0, result2);
 
-                Assert.Throws<TargetException>(() => context.ADbSet.Where(i => (i.C2 == null) && (nullableC.Value.Id > 0)).Count());
+                Assert.Throws<NullReferenceException>(() => context.ADbSet.Where(i => (i.C2 == null) && (nullableC.Value.Id > 0)).Count());
 
                 var testC = new TestC();
                 var result3 = context.ADbSet.Where(i => (i.C2.Value && testC).Id == 0).Count();
@@ -537,7 +538,7 @@ namespace GlobalsFrameworkTest.Tests
                 var result2 = context.ADbSet.Where(i => (i.C2 == null) || (nullableC.Value.Id > 0)).Count();
                 Assert.AreEqual(1, result2);
          
-                Assert.Throws<TargetException>(() => context.ADbSet.Where(i => (i.C2 != null) || (nullableC.Value.Id > 0)).Count());
+                Assert.Throws<NullReferenceException>(() => context.ADbSet.Where(i => (i.C2 != null) || (nullableC.Value.Id > 0)).Count());
 
                 var testC = new TestC();
                 var result3 = context.ADbSet.Where(i => (i.C2.Value || testC).Id == 0).Count();
@@ -584,6 +585,8 @@ namespace GlobalsFrameworkTest.Tests
                 var list = new List<int> {3};
                 var result10 = context.ADbSet.Where(i => list[0] == 3).Select(i => i.C).Count();
                 Assert.AreEqual(1, result10);
+
+                Assert.Throws<NullReferenceException>(() => context.ADbSet.Where(i => i.List.All(item => item.Array.Length > 0)).Count());
             }
         }
 

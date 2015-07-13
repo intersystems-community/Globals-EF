@@ -53,7 +53,7 @@ namespace GlobalsFramework.Linq.Helpers
         {
             if (argumentResults.All(a => a.IsSingleItem) && targetResult.IsSingleItem)
             {
-                var result = resolver(targetResult.Result, argumentResults.Select(a => a.Result).ToArray());
+                var result = InvokeResolver(() => resolver(targetResult.Result, argumentResults.Select(a => a.Result).ToArray()));
                 return !result.IsSuccess
                     ? ProcessingResult.Unsuccessful
                     : new ProcessingResult(true, result.Result, true);
@@ -78,7 +78,7 @@ namespace GlobalsFramework.Linq.Helpers
                 var objectValue = values.First();
                 var argumentsValues = values.Skip(1).ToArray();
 
-                var result = resolver(objectValue, argumentsValues);
+                var result = InvokeResolver(() => resolver(objectValue, argumentsValues));
                 if (!result.IsSuccess)
                     return ProcessingResult.Unsuccessful;
 
@@ -87,6 +87,20 @@ namespace GlobalsFramework.Linq.Helpers
             }
 
             return new ProcessingResult(true, resultsList);
+        }
+
+        private static ProcessingResult InvokeResolver(Func<ProcessingResult> func)
+        {
+            try
+            {
+                return func();
+            }
+            catch (Exception e)
+            {
+                if (e.InnerException is NullReferenceException)
+                    throw e.InnerException;
+                throw;
+            }
         }
     }
 }

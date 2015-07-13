@@ -62,24 +62,21 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
         private static List<object> ProcessLoadedEntityMembers(IEnumerable loadedData, MemberExpression expression)
         {
-            var result = loadedData;
+            var result = loadedData as IList<object> ?? loadedData.Cast<object>().ToList();
+
+            if (result == null || result.Any(item => item == null))
+                throw new NullReferenceException("Object reference not set to an instance of an object");
 
             var propertyInfo = expression.Member as PropertyInfo;
             if (propertyInfo != null)
             {
-                result = from object item in result
-                         select propertyInfo.GetValue(item, null);
-
-                return (from object item in result select item).ToList();
+                return result.Select(item => propertyInfo.GetValue(item, null)).ToList();
             }
 
             var fieldInfo = expression.Member as FieldInfo;
             if (fieldInfo != null)
             {
-                result = from object item in result
-                         select fieldInfo.GetValue(item);
-
-                return (from object item in result select item).ToList();
+                return result.Select(fieldInfo.GetValue).ToList();
             }
 
             throw new NotSupportedException("Supported only properties or fields for member expression");
@@ -87,6 +84,9 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
         private static object ProcessLoadedEntityMember(object loadedData, MemberExpression expression)
         {
+            if (loadedData == null)
+                throw new NullReferenceException("Object reference not set to an instance of an object");
+
             var propertyInfo = expression.Member as PropertyInfo;
             if (propertyInfo != null)
             {
