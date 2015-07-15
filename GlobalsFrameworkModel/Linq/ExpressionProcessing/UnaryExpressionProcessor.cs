@@ -24,6 +24,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
                 case ExpressionType.NegateChecked:
                 case ExpressionType.Not:
                 case ExpressionType.TypeAs:
+                case ExpressionType.UnaryPlus:
                     return IsPublicType(expression as UnaryExpression);
                 default:
                     return false;
@@ -48,6 +49,8 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
                     return ProcessNotExpression(expression as UnaryExpression, references);
                 case ExpressionType.TypeAs:
                     return ProcessTypeAsExpression(expression as UnaryExpression, references);
+                case ExpressionType.UnaryPlus:
+                    return ProcessUnaryPlusExpression(expression as UnaryExpression, references);
                 default:
                     return ProcessingResult.Unsuccessful;
             }
@@ -191,6 +194,31 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             foreach (var value in values)
             {
                 resultList.Add(TypeConverter.Instance.TypeAsOperation(value, expression.Type));
+            }
+
+            return new ProcessingResult(true, resultList);
+        }
+
+        private static ProcessingResult ProcessUnaryPlusExpression(UnaryExpression expression, List<NodeReference> references)
+        {
+            var operandResult = ExpressionProcessingHelper.ProcessExpression(expression.Operand, references);
+            if (!operandResult.IsSuccess)
+                return ProcessingResult.Unsuccessful;
+
+            Func<dynamic, dynamic> unaryPlusOperatorMethod = (value) => +value;
+
+            if (operandResult.IsSingleItem)
+            {
+                var value = operandResult.GetLoadedItem(expression.Operand.Type);
+                return new ProcessingResult(true, unaryPlusOperatorMethod(value), true);
+            }
+
+            var values = operandResult.GetLoadedItems(expression.Operand.Type);
+            var resultList = new List<object>();
+
+            foreach (var value in values)
+            {
+                resultList.Add(unaryPlusOperatorMethod(value));
             }
 
             return new ProcessingResult(true, resultList);

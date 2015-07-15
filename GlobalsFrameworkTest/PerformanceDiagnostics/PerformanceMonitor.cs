@@ -312,6 +312,12 @@ namespace GlobalsFrameworkTest.PerformanceDiagnostics
             var res = context.ADbSet.Where(i => new List<int> {2, 3} != null).Select(item => item.C).ToList();
         }
 
+        [PerfWatch]
+        private static void TestUnaryPlusExpression(TestDataContext context)
+        {
+            var res = context.ADbSet.Where(i => (+i.C.Value) >= 0).Select(item => item.C).ToList();
+        }
+
         #endregion
     }
 }

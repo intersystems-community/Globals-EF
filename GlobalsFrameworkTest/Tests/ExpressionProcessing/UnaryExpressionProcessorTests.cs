@@ -167,5 +167,15 @@ namespace GlobalsFrameworkTest.Tests.ExpressionProcessing
                 Assert.AreEqual(1, result3);
             }
         }
+
+        [Test]
+        public void TestUnaryPlusExpression()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.Where(i => (+i.C.Value) >= 0).Count();
+                Assert.AreEqual(1, result1);
+            }
+        }
     }
 }

@@ -246,6 +246,11 @@ namespace GlobalsFrameworkTest.Data
             return true;
         }
 
+        public static int operator +(TestC C)
+        {
+            return 0;
+        }
+
         public bool TestFunct(List<int> list)
         {
             return true;
