@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using GlobalsFramework.Linq.ExpressionProcessing;
@@ -25,7 +26,8 @@ namespace GlobalsFramework.Linq.Helpers
                 new TypeIsExpressionProcessor(),
                 new NewExpressionProcessor(),
                 new NewArrayExpressionProcessor(),
-                new MemberInitExpressionProcessor()
+                new MemberInitExpressionProcessor(),
+                new ListInitExpressionProcessor()
             };
         }
 
@@ -52,6 +54,25 @@ namespace GlobalsFramework.Linq.Helpers
             }
 
             return ProcessingResult.Unsuccessful;
+        }
+
+        internal static ProcessingResult CopyInstances(ProcessingResult instanceResult, int count, Func<object> processFunc)
+        {
+            var resultList = new List<object>();
+
+            if (count > 0)
+                resultList.Add(instanceResult.Result);
+
+            var isValueType = instanceResult.Result.GetType().IsValueType;
+
+            for (var i = 0; i < count - 1; i++)
+            {
+                resultList.Add(isValueType
+                    ? instanceResult.Result
+                    : processFunc());
+            }
+
+            return new ProcessingResult(true, resultList);
         }
 
         private static ProcessingResult ProcessPredicateInternal(Expression predicateExpression, List<NodeReference> references)

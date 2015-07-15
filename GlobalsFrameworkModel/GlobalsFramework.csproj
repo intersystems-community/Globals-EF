@@ -70,6 +70,7 @@
     <Compile Include="Linq\EntityQueryContext.cs" />
     <Compile Include="Linq\ExpressionCaching\CompiledExpressionStorage.cs" />
     <Compile Include="Linq\ExpressionCaching\ExpressionHashCodeCalculator.cs" />
+    <Compile Include="Linq\ExpressionProcessing\ListInitExpressionProcessor.cs" />
     <Compile Include="Linq\MemberBindingEvaluation\EvaluatedListInitializer.cs" />
     <Compile Include="Linq\MemberBindingEvaluation\EvaluatedMemberBinding.cs" />
     <Compile Include="Linq\MemberBindingEvaluation\MemberBindingEvaluator.cs" />

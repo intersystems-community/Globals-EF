@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -303,6 +304,12 @@ namespace GlobalsFrameworkTest.PerformanceDiagnostics
         private static void MemberInitExpression(TestDataContext context)
         {
             var res = context.ADbSet.Where(i => new TestInit(i.Id) != null).Select(item => item.C).ToList();
+        }
+
+        [PerfWatch]
+        private static void ListInitExpression(TestDataContext context)
+        {
+            var res = context.ADbSet.Where(i => new List<int> {2, 3} != null).Select(item => item.C).ToList();
         }
 
         #endregion

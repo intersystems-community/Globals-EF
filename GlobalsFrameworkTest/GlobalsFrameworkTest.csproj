@@ -63,6 +63,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\TestDataFactory.cs" />
     <Compile Include="Tests\ExpressionProcessing\InvokeExpressionProcessorTests.cs" />
+    <Compile Include="Tests\ExpressionProcessing\ListInitExpressionProcessorTests.cs" />
     <Compile Include="Tests\ExpressionProcessing\MemberExpressionProcessorTests.cs" />
     <Compile Include="Tests\ExpressionProcessing\MemberInitExpressionProcessorTests.cs" />
     <Compile Include="Tests\ExpressionProcessing\NewArrayExpressionProcessorTests.cs" />
