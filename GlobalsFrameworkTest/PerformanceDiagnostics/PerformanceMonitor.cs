@@ -313,7 +313,7 @@ namespace GlobalsFrameworkTest.PerformanceDiagnostics
         }
 
         [PerfWatch]
-        private static void TestUnaryPlusExpression(TestDataContext context)
+        private static void UnaryPlusExpression(TestDataContext context)
         {
             var res = context.ADbSet.Where(i => (+i.C.Value) >= 0).Select(item => item.C).ToList();
         }

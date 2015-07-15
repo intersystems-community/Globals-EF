@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using GlobalsFramework.Access;
@@ -123,10 +122,6 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
         private static ProcessingResult ProcessNegateExpression(UnaryExpression expression, List<NodeReference> references, bool isChecked = false)
         {
-            var operandResult = ExpressionProcessingHelper.ProcessExpression(expression.Operand, references);
-            if (!operandResult.IsSuccess)
-                return ProcessingResult.Unsuccessful;
-
             Func<dynamic, dynamic> negateMethod;
 
             if (!isChecked)
@@ -134,46 +129,13 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             else
                 negateMethod = (value) => checked (-value);
 
-            if (operandResult.IsSingleItem)
-            {
-                var value = operandResult.GetLoadedItem(expression.Operand.Type);
-                return new ProcessingResult(true, negateMethod(value), true);
-            }
-
-            var values = operandResult.GetLoadedItems(expression.Operand.Type);
-            var resultList = new List<object>();
-
-            foreach (var value in values)
-            {
-                resultList.Add(negateMethod(value));
-            }
-
-            return new ProcessingResult(true, resultList);
+            return PerformUnaryOperation(expression, references, negateMethod);
         }
 
         private static ProcessingResult ProcessNotExpression(UnaryExpression expression, List<NodeReference> references)
         {
-            var operandResult = ExpressionProcessingHelper.ProcessExpression(expression.Operand, references);
-            if (!operandResult.IsSuccess)
-                return ProcessingResult.Unsuccessful;
-
-            Func<dynamic, bool> notOperatorMethod = (value) => !value;
-
-            if (operandResult.IsSingleItem)
-            {
-                var value = operandResult.GetLoadedItem(expression.Operand.Type);
-                return new ProcessingResult(true, notOperatorMethod(value), true);
-            }
-
-            var values = operandResult.GetLoadedItems(expression.Operand.Type);
-            var resultList = new List<bool>();
-
-            foreach (var value in values)
-            {
-                resultList.Add(notOperatorMethod(value));
-            }
-
-            return new ProcessingResult(true, resultList);
+            Func<dynamic, dynamic> notOperatorMethod = (value) => !value;
+            return PerformUnaryOperation(expression, references, notOperatorMethod);
         }
 
         private static ProcessingResult ProcessTypeAsExpression(UnaryExpression expression, List<NodeReference> references)
@@ -201,16 +163,21 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
         private static ProcessingResult ProcessUnaryPlusExpression(UnaryExpression expression, List<NodeReference> references)
         {
+            Func<dynamic, dynamic> unaryPlusOperatorMethod = (value) => +value;
+            return PerformUnaryOperation(expression, references, unaryPlusOperatorMethod);
+        }
+
+        private static ProcessingResult PerformUnaryOperation(UnaryExpression expression, List<NodeReference> references,
+            Func<dynamic, dynamic> operationResolver)
+        {
             var operandResult = ExpressionProcessingHelper.ProcessExpression(expression.Operand, references);
             if (!operandResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
-            Func<dynamic, dynamic> unaryPlusOperatorMethod = (value) => +value;
-
             if (operandResult.IsSingleItem)
             {
                 var value = operandResult.GetLoadedItem(expression.Operand.Type);
-                return new ProcessingResult(true, unaryPlusOperatorMethod(value), true);
+                return new ProcessingResult(true, operationResolver(value), true);
             }
 
             var values = operandResult.GetLoadedItems(expression.Operand.Type);
@@ -218,7 +185,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
             foreach (var value in values)
             {
-                resultList.Add(unaryPlusOperatorMethod(value));
+                resultList.Add(operationResolver(value));
             }
 
             return new ProcessingResult(true, resultList);
