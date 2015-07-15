@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using GlobalsFramework.Access;
@@ -23,7 +24,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
                 case ExpressionType.NegateChecked:
                 case ExpressionType.Not:
                 case ExpressionType.TypeAs:
-                    return true;
+                    return IsPublicType(expression as UnaryExpression);
                 default:
                     return false;
             }
@@ -193,6 +194,11 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             }
 
             return new ProcessingResult(true, resultList);
+        }
+
+        private static bool IsPublicType(UnaryExpression expression)
+        {
+            return expression.Operand.Type.IsPublic;
         }
     }
 }

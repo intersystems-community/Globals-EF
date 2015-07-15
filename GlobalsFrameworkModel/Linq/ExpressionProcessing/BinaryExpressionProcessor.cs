@@ -54,7 +54,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
                 case ExpressionType.Or:
                 case ExpressionType.OrElse:
-                    return true;
+                    return IsPublicTypes(expression as BinaryExpression);
                 default:
                     return false;
             }
@@ -307,6 +307,11 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
                 return new ProcessingResult(true, (bool) rightValue, true);
 
             return ProcessingResult.Unsuccessful;
+        }
+
+        private static bool IsPublicTypes(BinaryExpression expression)
+        {
+            return expression.Left.Type.IsPublic && expression.Right.Type.IsPublic;
         }
     }
 }
