@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using GlobalsFramework.Linq.ExpressionProcessing;
-using GlobalsFramework.Linq.ExpressionProcessing.MemberBindingEvaluation;
+using GlobalsFramework.Linq.MemberBindingEvaluation;
 
 namespace GlobalsFramework.Linq.Helpers
 {

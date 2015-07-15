@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using GlobalsFramework.Linq.ExpressionProcessing;
 using GlobalsFramework.Linq.Helpers;
 using InterSystems.Globals;
 
-namespace GlobalsFramework.Linq.ExpressionProcessing.MemberBindingEvaluation
+namespace GlobalsFramework.Linq.MemberBindingEvaluation
 {
     internal static class MemberBindingEvaluator
     {

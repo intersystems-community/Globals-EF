@@ -2,8 +2,9 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using GlobalsFramework.Linq.ExpressionProcessing;
 
-namespace GlobalsFramework.Linq.ExpressionProcessing.MemberBindingEvaluation
+namespace GlobalsFramework.Linq.MemberBindingEvaluation
 {
     internal sealed class EvaluatedMemberBinding
     {

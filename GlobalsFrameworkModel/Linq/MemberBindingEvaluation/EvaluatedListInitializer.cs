@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
+using GlobalsFramework.Linq.ExpressionProcessing;
 
-namespace GlobalsFramework.Linq.ExpressionProcessing.MemberBindingEvaluation
+namespace GlobalsFramework.Linq.MemberBindingEvaluation
 {
     internal sealed class EvaluatedListInitializer
     {

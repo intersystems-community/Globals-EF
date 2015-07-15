@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using GlobalsFramework.Linq.ExpressionProcessing.MemberBindingEvaluation;
 using GlobalsFramework.Linq.Helpers;
+using GlobalsFramework.Linq.MemberBindingEvaluation;
 using InterSystems.Globals;
 
 namespace GlobalsFramework.Linq.ExpressionProcessing
