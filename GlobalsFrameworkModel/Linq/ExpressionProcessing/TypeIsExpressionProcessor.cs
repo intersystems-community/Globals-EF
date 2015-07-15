@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using GlobalsFramework.Linq.Helpers;
 using InterSystems.Globals;
 
 namespace GlobalsFramework.Linq.ExpressionProcessing
@@ -19,7 +20,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             if (typeBinaryExpression == null)
                 return ProcessingResult.Unsuccessful;
 
-            var result = PredicateExpressionProcessor.ProcessExpression(typeBinaryExpression.Expression, references);
+            var result = ExpressionProcessingHelper.ProcessExpression(typeBinaryExpression.Expression, references);
             if (!result.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 

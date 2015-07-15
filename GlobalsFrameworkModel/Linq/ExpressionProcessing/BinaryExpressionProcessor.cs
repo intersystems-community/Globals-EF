@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using GlobalsFramework.Access;
+using GlobalsFramework.Linq.Helpers;
 using GlobalsFramework.Utils.TypeDescription;
 using InterSystems.Globals;
 
@@ -75,11 +76,11 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
         private static ProcessingResult ProcessArrayIndexExpression(BinaryExpression expression, List<NodeReference> references)
         {
-            var arrayResult = PredicateExpressionProcessor.ProcessExpression(expression.Left, references);
+            var arrayResult = ExpressionProcessingHelper.ProcessExpression(expression.Left, references);
             if (!arrayResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
-            var indexResult = PredicateExpressionProcessor.ProcessExpression(expression.Right, references);
+            var indexResult = ExpressionProcessingHelper.ProcessExpression(expression.Right, references);
             if (!indexResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
@@ -103,7 +104,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             if (!(expression.Left.Type == typeof (bool) && expression.Right.Type == typeof (bool)))
                 return ProcessExpressionByDefault(expression, references);
 
-            var leftResult = PredicateExpressionProcessor.ProcessExpression(expression.Left, references);
+            var leftResult = ExpressionProcessingHelper.ProcessExpression(expression.Left, references);
             if (!leftResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
@@ -129,11 +130,11 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
         private static ProcessingResult ProcessExpressionByDefault(BinaryExpression expression, List<NodeReference> references)
         {
-            var leftResult = PredicateExpressionProcessor.ProcessExpression(expression.Left, references);
+            var leftResult = ExpressionProcessingHelper.ProcessExpression(expression.Left, references);
             if (!leftResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
-            var rightResult = PredicateExpressionProcessor.ProcessExpression(expression.Right, references);
+            var rightResult = ExpressionProcessingHelper.ProcessExpression(expression.Right, references);
             if (!rightResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
@@ -292,7 +293,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             if ((operationType == ExpressionType.OrElse) && (left))
                 return new ProcessingResult(true, true, true);
 
-            var rightResult = PredicateExpressionProcessor.ProcessExpression(rightExpression,
+            var rightResult = ExpressionProcessingHelper.ProcessExpression(rightExpression,
                 new List<NodeReference> {reference});
             if (!rightResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;

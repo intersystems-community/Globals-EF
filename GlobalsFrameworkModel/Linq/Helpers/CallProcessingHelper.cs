@@ -32,7 +32,7 @@ namespace GlobalsFramework.Linq.Helpers
                     continue;
                 }
 
-                var processingResult = PredicateExpressionProcessor.ProcessExpression(argumentExp, references);
+                var processingResult = ExpressionProcessingHelper.ProcessExpression(argumentExp, references);
                 if (!processingResult.IsSuccess)
                 {
                     result.Add(ProcessingResult.Unsuccessful);

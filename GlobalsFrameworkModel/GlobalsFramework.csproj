@@ -70,6 +70,11 @@
     <Compile Include="Linq\EntityQueryContext.cs" />
     <Compile Include="Linq\ExpressionCaching\CompiledExpressionStorage.cs" />
     <Compile Include="Linq\ExpressionCaching\ExpressionHashCodeCalculator.cs" />
+    <Compile Include="Linq\ExpressionProcessing\MemberBindingEvaluation\EvaluatedListInitializer.cs" />
+    <Compile Include="Linq\ExpressionProcessing\MemberBindingEvaluation\EvaluatedMemberBinding.cs" />
+    <Compile Include="Linq\ExpressionProcessing\MemberBindingEvaluation\MemberBindingEvaluator.cs" />
+    <Compile Include="Linq\Helpers\MemberBindingProcessingHelper.cs" />
+    <Compile Include="Linq\ExpressionProcessing\MemberInitExpressionProcessor.cs" />
     <Compile Include="Linq\ExpressionProcessing\NewArrayExpressionProcessor.cs" />
     <Compile Include="Linq\ExpressionProcessing\NewExpressionProcessor.cs" />
     <Compile Include="Linq\ExpressionProcessing\TypeIsExpressionProcessor.cs" />
@@ -87,7 +92,7 @@
     <Compile Include="Linq\ExpressionProcessing\UnaryExpressionProcessor.cs" />
     <Compile Include="Linq\IDbSet.cs" />
     <Compile Include="Linq\DbSet.cs" />
-    <Compile Include="Linq\ExpressionProcessing\PredicateExpressionProcessor.cs" />
+    <Compile Include="Linq\Helpers\ExpressionProcessingHelper.cs" />
     <Compile Include="Utils\ConnectionManagement\ConnectionParameters.cs" />
     <Compile Include="Utils\PrimaryKeyCalculation\CryptoProvider.cs" />
     <Compile Include="Utils\ConnectionManagement\ConnectionManager.cs" />

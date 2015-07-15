@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using GlobalsFramework;
 using GlobalsFramework.Attributes;
 using GlobalsFramework.Linq;
@@ -100,6 +102,64 @@ namespace GlobalsFrameworkTest.Data
         public TestA2() : base(0) { }
 
         public TestA2(Predicate<int> predicate, TestA a) : base(0) { }
+    }
+
+    public class TestInit : IEquatable<TestInit>
+    {
+        public int Id;
+        public List<int> List = new List<int>();
+        public TestInit2 Member = new TestInit2();
+        public TestInit3 StructMember;
+        public TestInit RecursiveReference;
+        public TestInit NullMember;
+
+        public TestInit()
+        {
+            RecursiveReference = this;
+        }
+        public TestInit(int i) : this()
+        {
+            Id = i;
+        }
+
+        public bool Equals(TestInit other)
+        {
+            if (Id != other.Id)
+                return false;
+            if (!List.SequenceEqual(other.List))
+                return false;
+
+            if (Member.Id != other.Member.Id)
+                return false;
+            if(!Member.List.SequenceEqual(other.Member.List))
+                return false;
+
+            if (StructMember.Id != other.StructMember.Id)
+                return false;
+
+            return true;
+        }
+    }
+
+    public class TestInit2 : IEnumerable
+    {
+        public List<Tuple<int, int>> List = new List<Tuple<int, int>>();
+        public int Id;
+
+        public void Add(int a, int b)
+        {
+            List.Add(new Tuple<int, int>(a, b));
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return List.GetEnumerator();
+        }
+    }
+
+    public struct TestInit3
+    {
+        public int Id;
     }
 
     public class TestB

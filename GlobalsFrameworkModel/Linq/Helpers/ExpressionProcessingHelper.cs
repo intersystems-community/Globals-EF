@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using GlobalsFramework.Linq.ExpressionProcessing;
 using InterSystems.Globals;
 
-namespace GlobalsFramework.Linq.ExpressionProcessing
+namespace GlobalsFramework.Linq.Helpers
 {
-    internal static class PredicateExpressionProcessor
+    internal static class ExpressionProcessingHelper
     {
         private static readonly List<IExpressionProcessor> ExpressionProcessors; 
 
-        static PredicateExpressionProcessor()
+        static ExpressionProcessingHelper()
         {
             ExpressionProcessors = new List<IExpressionProcessor>
             {
@@ -23,7 +24,8 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
                 new InvokeExpressionProcessor(),
                 new TypeIsExpressionProcessor(),
                 new NewExpressionProcessor(),
-                new NewArrayExpressionProcessor()
+                new NewArrayExpressionProcessor(),
+                new MemberInitExpressionProcessor()
             };
         }
 
@@ -69,7 +71,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
                 if (boolValue.Value)
                     resultReferences = references;
-                return new ProcessingResult(true, resultReferences, true);
+                return new ProcessingResult(true, resultReferences);
             }
 
             var resultList = processingResult.GetLoadedItems(predicateExpression.Type);

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using GlobalsFramework.Access;
+using GlobalsFramework.Linq.Helpers;
 using GlobalsFramework.Utils.TypeConversion;
 using InterSystems.Globals;
 
@@ -53,7 +54,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
         private static ProcessingResult ProcessArrayLengthExpression(UnaryExpression expression, List<NodeReference> references)
         {
-            var parentResult = PredicateExpressionProcessor.ProcessExpression(expression.Operand, references);
+            var parentResult = ExpressionProcessingHelper.ProcessExpression(expression.Operand, references);
             if (!parentResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
@@ -90,7 +91,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             if (references.Count == 0)
                 return new ProcessingResult(true, new ArrayList());
 
-            var parentResult = PredicateExpressionProcessor.ProcessExpression(expression.Operand, references);
+            var parentResult = ExpressionProcessingHelper.ProcessExpression(expression.Operand, references);
             if (!parentResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
@@ -118,7 +119,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
         private static ProcessingResult ProcessNegateExpression(UnaryExpression expression, List<NodeReference> references, bool isChecked = false)
         {
-            var operandResult = PredicateExpressionProcessor.ProcessExpression(expression.Operand, references);
+            var operandResult = ExpressionProcessingHelper.ProcessExpression(expression.Operand, references);
             if (!operandResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
@@ -148,7 +149,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
         private static ProcessingResult ProcessNotExpression(UnaryExpression expression, List<NodeReference> references)
         {
-            var operandResult = PredicateExpressionProcessor.ProcessExpression(expression.Operand, references);
+            var operandResult = ExpressionProcessingHelper.ProcessExpression(expression.Operand, references);
             if (!operandResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
@@ -173,7 +174,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
         private static ProcessingResult ProcessTypeAsExpression(UnaryExpression expression, List<NodeReference> references)
         {
-            var operandResult = PredicateExpressionProcessor.ProcessExpression(expression.Operand, references);
+            var operandResult = ExpressionProcessingHelper.ProcessExpression(expression.Operand, references);
             if (!operandResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 

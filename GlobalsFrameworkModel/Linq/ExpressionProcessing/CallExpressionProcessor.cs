@@ -36,7 +36,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             if (objectExpression == null)
                 return new ProcessingResult(true, null, true);
 
-            var objectResult = PredicateExpressionProcessor.ProcessExpression(objectExpression, references);
+            var objectResult = ExpressionProcessingHelper.ProcessExpression(objectExpression, references);
             if (!objectResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 

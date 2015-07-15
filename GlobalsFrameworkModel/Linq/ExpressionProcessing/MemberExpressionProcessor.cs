@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using GlobalsFramework.Access;
 using GlobalsFramework.Attributes;
+using GlobalsFramework.Linq.Helpers;
 using GlobalsFramework.Utils.TypeDescription;
 using InterSystems.Globals;
 
@@ -38,7 +39,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
                 return ProcessingResult.Unsuccessful;
             }
 
-            var parentResult = PredicateExpressionProcessor.ProcessExpression(memberExpression.Expression, references);
+            var parentResult = ExpressionProcessingHelper.ProcessExpression(memberExpression.Expression, references);
             if (!parentResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 

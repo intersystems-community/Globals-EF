@@ -266,7 +266,7 @@ namespace GlobalsFramework.Linq
             if (!isDeferred)
                 return ProcessExpressionByDefault(expression, source, ref isDeferred);
 
-            var processingResult = PredicateExpressionProcessor.ProcessPredicate(expression.Arguments[1], source as IEnumerable<NodeReference>);
+            var processingResult = ExpressionProcessingHelper.ProcessPredicate(expression.Arguments[1], source as IEnumerable<NodeReference>);
             return processingResult.IsSuccess
                 ? processingResult.Result
                 : ProcessExpressionByDefault(expression, source, ref isDeferred);

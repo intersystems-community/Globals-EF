@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using GlobalsFramework.Linq.Helpers;
 using InterSystems.Globals;
 
 namespace GlobalsFramework.Linq.ExpressionProcessing
@@ -18,7 +19,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             if (conditionalExpression == null)
                 return ProcessingResult.Unsuccessful;
 
-            var testResult = PredicateExpressionProcessor.ProcessExpression(conditionalExpression.Test, references);
+            var testResult = ExpressionProcessingHelper.ProcessExpression(conditionalExpression.Test, references);
             if (!testResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
@@ -26,7 +27,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             {
                 var testValue = (bool) testResult.GetLoadedItem(typeof (bool));
                 var resultExpression = testValue ? conditionalExpression.IfTrue : conditionalExpression.IfFalse;
-                return PredicateExpressionProcessor.ProcessExpression(resultExpression, references);
+                return ExpressionProcessingHelper.ProcessExpression(resultExpression, references);
             }
 
             var resultValues = testResult.GetLoadedItems(typeof (bool));
@@ -37,7 +38,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             {
                 var resultExpression = (bool) resultValue ? conditionalExpression.IfTrue : conditionalExpression.IfFalse;
 
-                var processingResult = PredicateExpressionProcessor.ProcessExpression(resultExpression, new List<NodeReference> {references[index]});
+                var processingResult = ExpressionProcessingHelper.ProcessExpression(resultExpression, new List<NodeReference> {references[index]});
                 if (!processingResult.IsSuccess)
                     return ProcessingResult.Unsuccessful;
 

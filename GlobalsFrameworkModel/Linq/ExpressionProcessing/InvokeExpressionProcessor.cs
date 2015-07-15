@@ -24,7 +24,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             if (!argumentsResults.All(r => r.IsSuccess))
                 return ProcessingResult.Unsuccessful;
 
-            var delegateResult = PredicateExpressionProcessor.ProcessExpression(invocationExpression.Expression, references);
+            var delegateResult = ExpressionProcessingHelper.ProcessExpression(invocationExpression.Expression, references);
             if (!delegateResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
