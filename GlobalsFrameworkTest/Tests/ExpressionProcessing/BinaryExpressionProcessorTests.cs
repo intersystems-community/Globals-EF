@@ -157,6 +157,9 @@ namespace GlobalsFrameworkTest.Tests.ExpressionProcessing
 
                 var result2 = context.ADbSet.Where(i => i.TestBProperty.Id.Value - 3 == 3).Count();
                 Assert.AreEqual(0, result2);
+
+                Assert.DoesNotThrow(
+                    () => context.ADbSet.Where(i => unchecked(int.MinValue - i.TestBProperty.Id.Value) == 9).Count());
             }
         }
 
@@ -170,6 +173,9 @@ namespace GlobalsFrameworkTest.Tests.ExpressionProcessing
 
                 var result2 = context.ADbSet.Where(i => checked(i.TestBProperty.Id.Value - 3) == 3).Count();
                 Assert.AreEqual(0, result2);
+
+                Assert.Throws<OverflowException>(
+                    () => context.ADbSet.Where(i => checked(int.MinValue - i.TestBProperty.Id.Value) == 9).Count());
             }
         }
 
@@ -183,6 +189,9 @@ namespace GlobalsFrameworkTest.Tests.ExpressionProcessing
 
                 var result2 = context.ADbSet.Where(i => i.TestBProperty.Id.Value * 3 == 22).Count();
                 Assert.AreEqual(0, result2);
+
+                Assert.DoesNotThrow(
+                    () => context.ADbSet.Where(i => unchecked(int.MaxValue * i.TestBProperty.Id.Value) == 9).Count());
             }
         }
 
@@ -196,6 +205,9 @@ namespace GlobalsFrameworkTest.Tests.ExpressionProcessing
 
                 var result2 = context.ADbSet.Where(i => checked(i.TestBProperty.Id.Value * 3) == 22).Count();
                 Assert.AreEqual(0, result2);
+
+                Assert.Throws<OverflowException>(
+                    () => context.ADbSet.Where(i => checked(int.MaxValue * i.TestBProperty.Id.Value) == 9).Count());
             }
         }
 

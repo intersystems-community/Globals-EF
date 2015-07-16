@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -91,33 +90,14 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
         private static ProcessingResult ProcessConvertExpression(UnaryExpression expression, List<NodeReference> references, bool isChecked = false)
         {
-            if (references.Count == 0)
-                return new ProcessingResult(true, new ArrayList());
+            Func<dynamic, dynamic> convertMethod;
 
-            var parentResult = ExpressionProcessingHelper.ProcessExpression(expression.Operand, references);
-            if (!parentResult.IsSuccess)
-                return ProcessingResult.Unsuccessful;
+            if (!isChecked)
+                convertMethod = value => TypeConverter.Instance.ConvertUnchecked(value, expression.Type);
+            else
+                convertMethod = value => TypeConverter.Instance.ConvertChecked(value, expression.Type);
 
-            if (parentResult.IsSingleItem)
-            {
-                var item = parentResult.GetLoadedItem(expression.Operand.Type);
-
-                var result = !isChecked
-                    ? TypeConverter.Instance.ConvertUnchecked(item, expression.Type)
-                    : TypeConverter.Instance.ConvertChecked(item, expression.Type);
-
-                return new ProcessingResult(true, result, true);
-            }
-
-            var items = parentResult.GetLoadedItems(expression.Operand.Type);
-            var resultList = new ArrayList();
-
-            foreach (var item in items)
-                resultList.Add(!isChecked
-                    ? TypeConverter.Instance.ConvertUnchecked(item, expression.Type)
-                    : TypeConverter.Instance.ConvertChecked(item, expression.Type));
-
-            return new ProcessingResult(true, resultList);
+            return PerformUnaryOperation(expression, references, convertMethod);
         }
 
         private static ProcessingResult ProcessNegateExpression(UnaryExpression expression, List<NodeReference> references, bool isChecked = false)
@@ -125,45 +105,28 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             Func<dynamic, dynamic> negateMethod;
 
             if (!isChecked)
-                negateMethod = (value) => unchecked (-value);
+                negateMethod = value => unchecked (-value);
             else
-                negateMethod = (value) => checked (-value);
+                negateMethod = value => checked (-value);
 
             return PerformUnaryOperation(expression, references, negateMethod);
         }
 
         private static ProcessingResult ProcessNotExpression(UnaryExpression expression, List<NodeReference> references)
         {
-            Func<dynamic, dynamic> notOperatorMethod = (value) => !value;
+            Func<dynamic, dynamic> notOperatorMethod = value => !value;
             return PerformUnaryOperation(expression, references, notOperatorMethod);
         }
 
         private static ProcessingResult ProcessTypeAsExpression(UnaryExpression expression, List<NodeReference> references)
         {
-            var operandResult = ExpressionProcessingHelper.ProcessExpression(expression.Operand, references);
-            if (!operandResult.IsSuccess)
-                return ProcessingResult.Unsuccessful;
-
-            if (operandResult.IsSingleItem)
-            {
-                var value = operandResult.GetLoadedItem(expression.Operand.Type);
-                return new ProcessingResult(true, TypeConverter.Instance.TypeAsOperation(value, expression.Type), true);
-            }
-
-            var values = operandResult.GetLoadedItems(expression.Operand.Type);
-            var resultList = new List<object>();
-
-            foreach (var value in values)
-            {
-                resultList.Add(TypeConverter.Instance.TypeAsOperation(value, expression.Type));
-            }
-
-            return new ProcessingResult(true, resultList);
+            Func<dynamic, dynamic> typeAsMethod = value => TypeConverter.Instance.TypeAsOperation(value, expression.Type);
+            return PerformUnaryOperation(expression, references, typeAsMethod);
         }
 
         private static ProcessingResult ProcessUnaryPlusExpression(UnaryExpression expression, List<NodeReference> references)
         {
-            Func<dynamic, dynamic> unaryPlusOperatorMethod = (value) => +value;
+            Func<dynamic, dynamic> unaryPlusOperatorMethod = value => +value;
             return PerformUnaryOperation(expression, references, unaryPlusOperatorMethod);
         }
 
