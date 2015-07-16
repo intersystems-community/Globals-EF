@@ -318,6 +318,12 @@ namespace GlobalsFrameworkTest.PerformanceDiagnostics
             var res = context.ADbSet.Where(i => (+i.C.Value) >= 0).Select(item => item.C).ToList();
         }
 
+        [PerfWatch]
+        private static void OnesComplementExpression(TestDataContext context)
+        {
+            var res = context.ADbSet.Where(i => i.TestBProperty.Id == -8).Select(item => item.C).ToList();
+        }
+
         #endregion
     }
 }

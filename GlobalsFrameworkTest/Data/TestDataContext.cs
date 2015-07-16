@@ -246,7 +246,12 @@ namespace GlobalsFrameworkTest.Data
             return true;
         }
 
-        public static int operator +(TestC C)
+        public static int operator +(TestC c)
+        {
+            return 0;
+        }
+
+        public static int operator ~(TestC c)
         {
             return 0;
         }

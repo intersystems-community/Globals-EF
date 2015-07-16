@@ -177,5 +177,25 @@ namespace GlobalsFrameworkTest.Tests.ExpressionProcessing
                 Assert.AreEqual(1, result1);
             }
         }
+
+        [Test]
+        public void TestOnesComplementExpression()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.Where(i => ~5 == -6).Count();
+                Assert.AreEqual(1, result1);
+
+                var result2 = context.ADbSet.Where(i => ~i.C == 0).Count();
+                Assert.AreEqual(1, result2);
+
+                var a = 5;
+                var result3 = context.ADbSet.Where(i => ~a == 0).Count();
+                Assert.AreEqual(0, result3);
+
+                var result4 = context.ADbSet.Where(i => ~(a + i.TestBProperty.Id) == -13).Count();
+                Assert.AreEqual(1, result4);
+            }
+        }
     }
 }

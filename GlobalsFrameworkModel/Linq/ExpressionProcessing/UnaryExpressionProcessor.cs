@@ -23,6 +23,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
                 case ExpressionType.Not:
                 case ExpressionType.TypeAs:
                 case ExpressionType.UnaryPlus:
+                case ExpressionType.OnesComplement:
                     return IsPublicType(expression as UnaryExpression);
                 default:
                     return false;
@@ -49,6 +50,8 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
                     return ProcessTypeAsExpression(expression as UnaryExpression, references);
                 case ExpressionType.UnaryPlus:
                     return ProcessUnaryPlusExpression(expression as UnaryExpression, references);
+                case ExpressionType.OnesComplement:
+                    return ProcessOnesComplementExpression(expression as UnaryExpression, references);
                 default:
                     return ProcessingResult.Unsuccessful;
             }
@@ -114,6 +117,10 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
         private static ProcessingResult ProcessNotExpression(UnaryExpression expression, List<NodeReference> references)
         {
+            //ones complement and logical not operations are mapped to the same Not Expression
+            if (!IsLogicalNotOperation(expression))
+                return ProcessOnesComplementExpression(expression, references);
+
             Func<dynamic, dynamic> notOperatorMethod = value => !value;
             return PerformUnaryOperation(expression, references, notOperatorMethod);
         }
@@ -126,8 +133,14 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
         private static ProcessingResult ProcessUnaryPlusExpression(UnaryExpression expression, List<NodeReference> references)
         {
-            Func<dynamic, dynamic> unaryPlusOperatorMethod = value => +value;
-            return PerformUnaryOperation(expression, references, unaryPlusOperatorMethod);
+            Func<dynamic, dynamic> unaryPlusMethod = value => +value;
+            return PerformUnaryOperation(expression, references, unaryPlusMethod);
+        }
+
+        private static ProcessingResult ProcessOnesComplementExpression(UnaryExpression expression, List<NodeReference> references)
+        {
+            Func<dynamic, dynamic> onesComplementMethod = value => ~value;
+            return PerformUnaryOperation(expression, references, onesComplementMethod);
         }
 
         private static ProcessingResult PerformUnaryOperation(UnaryExpression expression, List<NodeReference> references,
@@ -157,6 +170,18 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
         private static bool IsPublicType(UnaryExpression expression)
         {
             return expression.Operand.Type.IsPublic;
+        }
+
+        private static bool IsLogicalNotOperation(UnaryExpression expression)
+        {
+            //check if there is custom logical not operator in the type
+            if (expression.Method != null)
+            {
+                return expression.Method.Name == "op_LogicalNot";
+            }
+
+            //logical not operator is defined for bool only
+            return expression.Operand.Type == typeof (bool);
         }
     }
 }
