@@ -1,4 +1,8 @@
-﻿using GlobalsFrameworkTest.PerformanceDiagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using GlobalsFrameworkTest.Data;
+using GlobalsFrameworkTest.PerformanceTests;
 
 namespace GlobalsFrameworkTest
 {
@@ -6,7 +10,8 @@ namespace GlobalsFrameworkTest
     {
         private static void Main(string[] args)
         {
-            PerformanceMonitor.TestPerformance();
+            var perfMonitor = new ExpressionNodesPerformanceMonitor();
+            perfMonitor.TestPerformance();
         }
     }
 }
