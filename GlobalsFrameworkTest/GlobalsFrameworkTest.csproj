@@ -74,6 +74,7 @@
     <Compile Include="Tests\ExpressionProcessing\TypeIsExpressionProcessorTests.cs" />
     <Compile Include="Tests\ExpressionProcessing\UnaryExpressionProcessorTests.cs" />
     <Compile Include="Tests\PrimaryKeyCalculatorTest.cs" />
+    <Compile Include="Tests\QueryProcessingTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
