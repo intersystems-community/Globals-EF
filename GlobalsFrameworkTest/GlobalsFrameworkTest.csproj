@@ -53,6 +53,7 @@
     <Compile Include="PerformanceDiagnostics\PerfWatchAttribute.cs" />
     <Compile Include="PerformanceTests\BasePerformanceMonitor.cs" />
     <Compile Include="PerformanceTests\ExpressionNodesPerformanceMonitor.cs" />
+    <Compile Include="PerformanceTests\QueryPerformanceMonitor.cs" />
     <Compile Include="Tests\DataContextTests.cs" />
     <Compile Include="Data\TestDataContext.cs" />
     <Compile Include="Tests\EntityValidatorTest.cs" />

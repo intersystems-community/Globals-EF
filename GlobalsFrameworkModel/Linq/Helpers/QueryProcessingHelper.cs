@@ -45,7 +45,7 @@ namespace GlobalsFramework.Linq.Helpers
                     var result = queryProcessor.ProcessQuery(query, parentResult);
 
                     return result.IsSuccess
-                        ? ResolveProcessingResult(result, GetReturnParameterType(query))
+                        ? ResolveProcessingResult(result, query)
                         : ProcessQueryByDefault(query, parentResult);
                 }
             }
@@ -59,13 +59,13 @@ namespace GlobalsFramework.Linq.Helpers
             return new ProcessingResult(true, result);
         }
 
-        private static ProcessingResult ResolveProcessingResult(ProcessingResult result, Type elementType)
+        private static ProcessingResult ResolveProcessingResult(ProcessingResult result, MethodCallExpression query)
         {
             if (result.IsDeferred())
                 return result;
 
             var sourceItems = result.GetItems();
-            var resultList = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(elementType));
+            var resultList = (IList) Activator.CreateInstance(typeof (List<>).MakeGenericType(GetReturnParameterType(query)));
 
             foreach (var sourceItem in sourceItems)
             {

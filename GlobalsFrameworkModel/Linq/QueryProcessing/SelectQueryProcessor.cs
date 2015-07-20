@@ -18,13 +18,8 @@ namespace GlobalsFramework.Linq.QueryProcessing
             if (!parentResult.IsDeferred())
                 return ProcessingResult.Unsuccessful;
 
-            var unaryExpression = query.Arguments[1] as UnaryExpression;
-            if (unaryExpression == null)
-                return ProcessingResult.Unsuccessful;
-
-            var lambdaExpression = unaryExpression.Operand as LambdaExpression;
-            if (lambdaExpression == null)
-                return ProcessingResult.Unsuccessful;
+            var unaryExpression = (UnaryExpression)query.Arguments[1];
+            var lambdaExpression = (LambdaExpression)unaryExpression.Operand;
 
             var memberExpression = lambdaExpression.Body;
             var nodeReferences = (List<NodeReference>) parentResult.Result;
