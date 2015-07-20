@@ -125,7 +125,7 @@ namespace GlobalsFramework.Access
 
         internal static object ReadNodes(IEnumerable<NodeReference> nodes, Type elementType)
         {
-            var resultInstance = Activator.CreateInstance(typeof (List<>).MakeGenericType(elementType)) as IList;
+            var resultInstance = (IList)Activator.CreateInstance(typeof (List<>).MakeGenericType(elementType));
 
             foreach (var nodeReference in nodes)
             {
@@ -430,14 +430,13 @@ namespace GlobalsFramework.Access
 
         private static object ReadEnumerable(NodeReference node, Type columnType)
         {
-            var instance = Activator.CreateInstance(columnType) as IList;
+            var instance = (IList)Activator.CreateInstance(columnType);
             var elementType = columnType.IsGenericType ? columnType.GetGenericArguments().Single() : typeof(object);
 
             if(string.IsNullOrEmpty(node.NextSubscript("")))
                 return null;
 
             var subscript = node.NextSubscript(EnumerableLengthsSubscriptName);
-            var index = 0;
 
             while (!subscript.Equals(""))
             {
@@ -448,7 +447,6 @@ namespace GlobalsFramework.Access
 
                 subscript = node.NextSubscript();
                 node.SetSubscriptCount(node.GetSubscriptCount() - 1);
-                index++;
             }
 
             return instance;
