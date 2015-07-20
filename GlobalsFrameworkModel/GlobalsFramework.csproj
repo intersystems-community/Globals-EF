@@ -67,10 +67,10 @@
     <Compile Include="Exceptions\GlobalsDbException.cs" />
     <Compile Include="Extensions\NodeReferenceExtensions.cs" />
     <Compile Include="Linq\EntityQuery.cs" />
-    <Compile Include="Linq\EntityQueryContext.cs" />
     <Compile Include="Linq\ExpressionCaching\CompiledExpressionStorage.cs" />
     <Compile Include="Linq\ExpressionCaching\ExpressionHashCodeCalculator.cs" />
     <Compile Include="Linq\ExpressionProcessing\ListInitExpressionProcessor.cs" />
+    <Compile Include="Linq\Helpers\QueryProcessingHelper.cs" />
     <Compile Include="Linq\MemberBindingEvaluation\EvaluatedListInitializer.cs" />
     <Compile Include="Linq\MemberBindingEvaluation\EvaluatedMemberBinding.cs" />
     <Compile Include="Linq\MemberBindingEvaluation\MemberBindingEvaluator.cs" />
@@ -79,7 +79,6 @@
     <Compile Include="Linq\ExpressionProcessing\NewArrayExpressionProcessor.cs" />
     <Compile Include="Linq\ExpressionProcessing\NewExpressionProcessor.cs" />
     <Compile Include="Linq\ExpressionProcessing\TypeIsExpressionProcessor.cs" />
-    <Compile Include="Linq\Helpers\ExpressionHelper.cs" />
     <Compile Include="Linq\ExpressionProcessing\BinaryExpressionProcessor.cs" />
     <Compile Include="Linq\ExpressionProcessing\CallExpressionProcessor.cs" />
     <Compile Include="Linq\ExpressionProcessing\ConditionalExpressionProcessor.cs" />
@@ -94,6 +93,9 @@
     <Compile Include="Linq\IDbSet.cs" />
     <Compile Include="Linq\DbSet.cs" />
     <Compile Include="Linq\Helpers\ExpressionProcessingHelper.cs" />
+    <Compile Include="Linq\QueryProcessing\IQueryProcessor.cs" />
+    <Compile Include="Linq\QueryProcessing\SelectQueryProcessor.cs" />
+    <Compile Include="Linq\QueryProcessing\WhereQueryProcessor.cs" />
     <Compile Include="Utils\ConnectionManagement\ConnectionParameters.cs" />
     <Compile Include="Utils\PrimaryKeyCalculation\CryptoProvider.cs" />
     <Compile Include="Utils\ConnectionManagement\ConnectionManager.cs" />

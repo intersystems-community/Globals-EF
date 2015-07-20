@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -59,13 +58,12 @@ namespace GlobalsFramework.Linq.Helpers
 
         internal static ProcessingResult CopyInstances(ProcessingResult instanceResult, int count, Func<object> processFunc)
         {
-            var instanceType = instanceResult.Result.GetType();
-            var resultList = (IList) Activator.CreateInstance(typeof (List<>).MakeGenericType(instanceType));
+            var resultList = new List<object>();
 
             if (count > 0)
                 resultList.Add(instanceResult.Result);
 
-            var isValueType = instanceType.IsValueType;
+            var isValueType = instanceResult.Result.GetType().IsValueType;
 
             for (var i = 0; i < count - 1; i++)
             {

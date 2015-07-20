@@ -26,7 +26,7 @@ namespace GlobalsFrameworkTest.Tests.ExpressionProcessing
                 var result3 = context.ADbSet.Where(i => i.TestBProperty.Array[0].Id == c.Array[0].Id).Count();
                 Assert.AreEqual(0, result3);
 
-                var result4 = context.ADbSet.Where(i => i.TestBProperty.Array[0].Id != i.TestBProperty.Array[1].Id).Count();
+                var result4 = context.ADbSet.Where(i => i.TestBProperty.Array[0].Id != i.TestBProperty.Array3[0,0].Id).Count();
                 Assert.AreEqual(1, result4);
 
                 var result5 = context.ADbSet.Where(i => c.Array[0].Id != 4).Count();

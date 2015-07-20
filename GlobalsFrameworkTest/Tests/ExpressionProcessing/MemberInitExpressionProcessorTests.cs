@@ -59,13 +59,13 @@ namespace GlobalsFrameworkTest.Tests.ExpressionProcessing
                 var result7 = context.ADbSet.Where(i => new TestInit { Member = { Id = i.Id } }.Member.Id == id).Count();
                 Assert.AreEqual(1, result7);
 
+                Assert.Throws<NullReferenceException>(() => context.ADbSet.Where(i => new TestInit { NullMember = { Id = 3 } } != null).Count());
+
                 context.ADbSet.DeleteAllOnSubmit(context.ADbSet);
                 context.SubmitChanges();
 
                 var result8 = context.ADbSet.Where(i => new TestInit { Id = i.Id }.Id == i.Id).Count();
                 Assert.AreEqual(0, result8);
-
-                Assert.Throws<NullReferenceException>(() => context.ADbSet.Where(i => new TestInit { NullMember = { Id = 3 } } != null).Count());
             }
         }
     }

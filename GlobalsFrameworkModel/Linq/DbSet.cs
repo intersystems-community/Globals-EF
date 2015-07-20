@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using GlobalsFramework.Actions;
+using GlobalsFramework.Linq.Helpers;
 using GlobalsFramework.Utils.TypeDescription;
 using InterSystems.Globals;
 
@@ -90,7 +91,7 @@ namespace GlobalsFramework.Linq
 
         public object Execute(Expression expression)
         {
-            return EntityQueryContext.Execute(CreateNodeReference(), Context, expression);
+            return QueryProcessingHelper.ProcessQueries(CreateNodeReference(), Context, expression);
         }
 
         public TResult Execute<TResult>(Expression expression)
