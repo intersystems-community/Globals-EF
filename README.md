@@ -11,11 +11,12 @@ So, main purpose of Globals EF is to ease working with Caché and GlobalsDB. Cor
 1. Download Caché for official web - site.
 2. Set environment variables:  
   2.1 GLOBALS_HOME - set the path to the Caché installation folder (C:\InterSystems\Cache\ - as example)  
-  2.2 PATH - set the path to the Bin direcory (C:\InterSystems\Cache\Bin - as example)  
-3. Create new project in Visual Studio. Note, that minumum supported version of Visual Studio - is VS2012. 
-4. Add reference to the GlobalsFramework.dll assembly
-5. Set target platform of your newly created project to the x64. Project-> <Project-name> Properties->Build->Platform target
-6. It's all! GlobalsEF is ready for use.
+  2.2 PATH - set the path to the Bin direcory (C:\InterSystems\Cache\Bin - as example)
+3. After downloading and successful installation of Caché, open System Management Portal and create user, which will be used by Globals EF. For example, TestUser with password - testpassword and namespace - SAMPLES. Note, that service %Service_CallIn must be enabled (System -> Security Management -> Services).
+4. Create new project in Visual Studio. Note, that minumum supported version of Visual Studio - is VS2012. 
+5. Add reference to the GlobalsFramework.dll assembly
+6. Set target platform of your newly created project to the x64. Project-> <Project-name> Properties->Build->Platform target
+7. It's all! GlobalsEF is ready for use.
 
 ##Public API
 
@@ -95,7 +96,12 @@ Applying `DbSetAttribute` to TEntity class is not compulsory.
 ####DataContext
 
 Abstract class that provides connection to database. You need to create derived class with set of `DbSet<TEntity>` public properties or fields for getting access to database data.   
-Declared public method `SubmitChanges()` submits all changes with database that uses have made with public methods of `DbSet<TEntity>` class (such as `InsertOnSubmit(TEntity entity)`).
+Declared public method `SubmitChanges()` submits all changes with database that uses have made with public methods of `DbSet<TEntity>` class (such as `InsertOnSubmit(TEntity entity)`).   
+`DataContext` class has two protected constructors.  
+1. `protected DataContext(string namespc, string user, string password)`  
+Takes security parameters for connection to database.  
+2. `protected DataContext()`  
+Parameterless constructor. It is used for connection to Caché with minimum security level (without user checking) or for connection to GlobalsDB.
 
 ####GlobalsDbException
 
@@ -178,10 +184,13 @@ As you can see, every country contains list of towns, every towns contains list 
 I am going to store Country entity in the database and all child entities will be serialized to globals in the Caché database automatically. According to the rules of `ColumnAttribute`, I need to declare primary key for entity Country. So I marked property `Name` as primary key.   
 
 To operate with Country entity you need, at first, to create derived class of `DataContext`. Secondly, you need to declare `DbSet<TEntity>` property in the derived class, where TEntity – type of entity which you desire to store in the database.
-I have declared `TestDataContext` class according to the mentioned rules. Class `TestDataContext` has only one public property `Countries`   
+I have declared `TestDataContext` class according to the mentioned rules. Class `TestDataContext` has only one public property `Countries`.  
+Also I have declared public parameterless constuctor which calls constructor with security credentials, thus using of UniversityInfoDataContext becomes very convenient.
 ```c#
 internal class UniversityInfoDataContext : DataContext
-{
+{   
+    public TestDataContext() : base("SAMPLES", "TestUser", "testpassword") { }
+    
     public DbSet<Country> Countries { get; set; }
 }
 ```
