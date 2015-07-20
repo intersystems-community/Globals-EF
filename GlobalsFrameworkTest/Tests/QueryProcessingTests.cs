@@ -55,6 +55,7 @@ namespace GlobalsFrameworkTest.Tests
                 var aData5 = context.ADbSet.Select(a => a.List[1].Array2[0]).First();
                 var aData6 = context.ADbSet.Select(a => a.C2).Single();
                 var aData7 = context.ADbSet.Select(a => a.TestBProperty.Array3).Single();
+                var aData8 = context.ADbSet.Select(a => a).Select(a => a.TestBProperty).Select(b => b.Array3).Select(ar => ar[0,1]).Single();
 
                 var bData1 = context.BDbSet.Select(b => b.Array[0].Id).Single();
                 var bData2 = context.BDbSet.Select(b => b.Array.Length).Single();
@@ -70,6 +71,7 @@ namespace GlobalsFrameworkTest.Tests
                 Assert.AreEqual(aData5.Id, 8);
                 Assert.AreEqual(aData6, null);
                 Assert.AreEqual(aData7[0, 1].Id, 5);
+                Assert.AreEqual(aData8.Id, 5);
 
                 Assert.AreEqual(bData1, 3);
                 Assert.AreEqual(bData2, 1);
@@ -77,6 +79,16 @@ namespace GlobalsFrameworkTest.Tests
                 Assert.AreEqual(bData4, 6);
                 Assert.AreEqual(bData5, 3);
                 Assert.AreEqual(bData6, 7);
+            }
+        }
+
+        [Test]
+        public void TestWhere()
+        {
+            using (var context = new TestDataContext())
+            {
+                var aData1 = context.ADbSet.Where(a => a.TestBProperty.Array[0].Id == 3).Select(a => a.L1.First()).Single();
+                Assert.AreEqual(aData1, 1);
             }
         }
 
