@@ -63,14 +63,8 @@ namespace GlobalsFramework.Linq.Helpers
             if (count > 0)
                 resultList.Add(instanceResult.Result);
 
-            var isValueType = instanceResult.Result.GetType().IsValueType;
-
             for (var i = 0; i < count - 1; i++)
-            {
-                resultList.Add(isValueType
-                    ? instanceResult.Result
-                    : processFunc());
-            }
+                resultList.Add(processFunc());
 
             return new ProcessingResult(true, resultList);
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -31,7 +32,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
                 var constructorInfo = constructor as ConstructorInfo;
                 return constructorInfo != null
                     ? new ProcessingResult(true, constructorInfo.Invoke(arguments))
-                    : ProcessingResult.Unsuccessful;
+                    : new ProcessingResult(true, Activator.CreateInstance(expression.Type));
             });
         }
     }
