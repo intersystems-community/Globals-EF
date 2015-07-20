@@ -12,10 +12,10 @@ So, main purpose of Globals EF is to ease working with Caché and GlobalsDB. Cor
 2. Set environment variables:  
   2.1 GLOBALS_HOME - set the path to the Caché installation folder (C:\InterSystems\Cache\ - as example)  
   2.2 PATH - set the path to the Bin direcory (C:\InterSystems\Cache\Bin - as example)
-3. After downloading and successful installation of Caché, open System Management Portal and create user, which will be used by Globals EF. For example, TestUser with password - testpassword and namespace - SAMPLES. Note, that service %Service_CallIn must be enabled (System -> Security Management -> Services).
+3. After downloading and successful installation of Caché, open System Management Portal and create user, which will be used by Globals EF. For example, TestUser with password - testpassword and namespace - SAMPLES. Note, that service %Service_CallIn must be enabled (System → Security Management → Services).
 4. Create new project in Visual Studio. Note, that minumum supported version of Visual Studio - is VS2012. 
 5. Add reference to the GlobalsFramework.dll assembly
-6. Set target platform of your newly created project to the x64. Project-> <Project-name> Properties->Build->Platform target
+6. Set target platform of your newly created project to the x64. Project → <Project-name> Properties → Build → Platform target
 7. It's all! GlobalsEF is ready for use.
 
 ##Public API
