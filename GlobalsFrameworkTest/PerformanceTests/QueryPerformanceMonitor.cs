@@ -17,5 +17,23 @@ namespace GlobalsFrameworkTest.PerformanceTests
         {
             var res = context.ADbSet.Where(a => a.Id >= 0).Select(a => a.Id).Count();
         }
+
+        [PerfWatch]
+        private void CountQuery(TestDataContext context)
+        {
+            var res = context.ADbSet.Count(a => a.Id >= 0);
+        }
+
+        [PerfWatch]
+        private void LongCountQuery(TestDataContext context)
+        {
+            var res = context.ADbSet.LongCount(a => a.Id >= 0);
+        }
+
+        [PerfWatch]
+        private void AnyQuery(TestDataContext context)
+        {
+            var res = context.ADbSet.Any(a => a.Id >= 0);
+        }
     }
 }

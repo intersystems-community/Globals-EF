@@ -19,7 +19,8 @@ namespace GlobalsFramework.Linq.Helpers
             QueryProcessors = new List<IQueryProcessor>
             {
                 new SelectQueryProcessor(),
-                new WhereQueryProcessor()
+                new WhereQueryProcessor(),
+                new CountQueryProcessor()
             };
         }
 
@@ -36,6 +37,18 @@ namespace GlobalsFramework.Linq.Helpers
                 : result.Result;
         }
 
+        internal static Type GetReturnParameterType(MethodCallExpression query)
+        {
+            var returnParameter = query.Method.ReturnParameter;
+
+            if (returnParameter == null)
+                throw new InvalidOperationException("Unable to perform operation");
+
+            return returnParameter.ParameterType.IsGenericType
+                ? returnParameter.ParameterType.GetGenericArguments().Single()
+                : returnParameter.ParameterType;
+        }
+
         private static ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
         {
             foreach (var queryProcessor in QueryProcessors)
@@ -45,7 +58,7 @@ namespace GlobalsFramework.Linq.Helpers
                     var result = queryProcessor.ProcessQuery(query, parentResult);
 
                     return result.IsSuccess
-                        ? ResolveProcessingResult(result, query)
+                        ? result
                         : ProcessQueryByDefault(query, parentResult);
                 }
             }
@@ -57,22 +70,6 @@ namespace GlobalsFramework.Linq.Helpers
         {
             var result = InvokeQuery(query, parentResult.GetLoadedItems(GetSourceParameterType(query)));
             return new ProcessingResult(true, result);
-        }
-
-        private static ProcessingResult ResolveProcessingResult(ProcessingResult result, MethodCallExpression query)
-        {
-            if (result.IsDeferred())
-                return result;
-
-            var sourceItems = result.GetItems();
-            var resultList = (IList) Activator.CreateInstance(typeof (List<>).MakeGenericType(GetReturnParameterType(query)));
-
-            foreach (var sourceItem in sourceItems)
-            {
-                resultList.Add(sourceItem);
-            }
-
-            return new ProcessingResult(true, resultList);
         }
 
         private static object InvokeQuery(MethodCallExpression query, object sourse)
@@ -127,18 +124,6 @@ namespace GlobalsFramework.Linq.Helpers
             return sourceParameter.ParameterType.IsGenericType
                 ? sourceParameter.ParameterType.GetGenericArguments().Single()
                 : sourceParameter.ParameterType;
-        }
-
-        private static Type GetReturnParameterType(MethodCallExpression query)
-        {
-            var returnParameter = query.Method.ReturnParameter;
-
-            if (returnParameter == null)
-                throw new InvalidOperationException("Unable to perform operation");
-
-            return returnParameter.ParameterType.IsGenericType
-                ? returnParameter.ParameterType.GetGenericArguments().Single()
-                : returnParameter.ParameterType;
         }
     }
 }

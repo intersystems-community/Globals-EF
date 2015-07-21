@@ -49,36 +49,46 @@ namespace GlobalsFrameworkTest.Tests
             using (var context = new TestDataContext())
             {
                 var aData1 = context.ADbSet.Select(a => a.L1.First()).Single();
+                Assert.AreEqual(1, aData1);
+
                 var aData2 = context.ADbSet.Select(a => a.C.Value.Id).Single();
+                Assert.AreEqual(5, aData2);
+
                 var aData3 = context.ADbSet.Select(a => a.L1.Count).Single();
+                Assert.AreEqual(4, aData3);
+
                 var aData4 = context.ADbSet.Select(a => a.List[0].Array[0]).Single();
+                Assert.AreEqual(3, aData4.Id);
+
                 var aData5 = context.ADbSet.Select(a => a.List[1].Array2[0]).First();
+                Assert.AreEqual(8, aData5.Id);
+
                 var aData6 = context.ADbSet.Select(a => a.C2).Single();
+                Assert.AreEqual(null, aData6);
+
                 var aData7 = context.ADbSet.Select(a => a.TestBProperty.Array3).Single();
+                Assert.AreEqual(5, aData7[0, 1].Id);
+
                 var aData8 = context.ADbSet.Select(a => a).Select(a => a.TestBProperty).Select(b => b.Array3).Select(ar => ar[0,1]).Single();
+                Assert.AreEqual(5, aData8.Id);
 
                 var bData1 = context.BDbSet.Select(b => b.Array[0].Id).Single();
+                Assert.AreEqual(3, bData1);
+
                 var bData2 = context.BDbSet.Select(b => b.Array.Length).Single();
+                Assert.AreEqual(1, bData2);
+
                 var bData3 = context.BDbSet.Select(b => b.Array4[1][0, 0].Id).Single();
+                Assert.AreEqual(3, bData3);
+
                 var bData4 = context.BDbSet.Select(b => b.Array4[0].Length).Single();
+                Assert.AreEqual(6, bData4);
+
                 var bData5 = context.BDbSet.Select(b => b.Array4.Length).Single();
+                Assert.AreEqual(3, bData5);
+
                 var bData6 = context.BDbSet.Select(b => b.Array5[0, 1, 1].Id).Single();
-
-                Assert.AreEqual(aData1, 1);
-                Assert.AreEqual(aData2, 5);
-                Assert.AreEqual(aData3, 4);
-                Assert.AreEqual(aData4.Id, 3);
-                Assert.AreEqual(aData5.Id, 8);
-                Assert.AreEqual(aData6, null);
-                Assert.AreEqual(aData7[0, 1].Id, 5);
-                Assert.AreEqual(aData8.Id, 5);
-
-                Assert.AreEqual(bData1, 3);
-                Assert.AreEqual(bData2, 1);
-                Assert.AreEqual(bData3, 3);
-                Assert.AreEqual(bData4, 6);
-                Assert.AreEqual(bData5, 3);
-                Assert.AreEqual(bData6, 7);
+                Assert.AreEqual(7, bData6);  
             }
         }
 
@@ -88,7 +98,76 @@ namespace GlobalsFrameworkTest.Tests
             using (var context = new TestDataContext())
             {
                 var aData1 = context.ADbSet.Where(a => a.TestBProperty.Array[0].Id == 3).Select(a => a.L1.First()).Single();
-                Assert.AreEqual(aData1, 1);
+                Assert.AreEqual(1, aData1);
+            }
+        }
+
+        [Test]
+        public void TestCount()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result = context.ADbSet.Count();
+                Assert.AreEqual(1, result);
+
+                var result2 = context.ADbSet.Count(a => a.TestBProperty.Id > 0);
+                Assert.AreEqual(1, result2);
+
+                var result3 = context.ADbSet.OrderBy(a => a.Id).ThenBy(a => a.E).Count(a => a.Id >= 0);
+                Assert.AreEqual(1, result3);
+
+                var result4 = context.ADbSet.OrderBy(a => a.Id).ThenBy(a => a.E).Where(a => a.Id >= 0).Count();
+                Assert.AreEqual(1, result4);
+
+                var result5 = context.ADbSet.Count(a => a.Id < 0);
+                Assert.AreEqual(0, result5);
+
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
+
+                var result6 = context.ADbSet.Count();
+                Assert.AreEqual(2, result6);
+            }
+        }
+
+        [Test]
+        public void TestLongCount()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result = context.ADbSet.LongCount();
+                Assert.AreEqual(1, result);
+
+                var result2 = context.ADbSet.LongCount(a => a.TestBProperty.Id > 0);
+                Assert.AreEqual(1, result2);
+
+                var result3 = context.ADbSet.OrderBy(a => a.Id).ThenBy(a => a.E).LongCount(a => a.Id >= 0);
+                Assert.AreEqual(1, result3);
+
+                var result4 = context.ADbSet.OrderBy(a => a.Id).ThenBy(a => a.E).Where(a => a.Id >= 0).LongCount();
+                Assert.AreEqual(1, result4);
+
+                var result5 = context.ADbSet.LongCount(a => a.Id < 0);
+                Assert.AreEqual(0, result5);
+            }
+        }
+
+        [Test]
+        public void TestAny()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result = context.ADbSet.Any();
+                Assert.AreEqual(true, result);
+
+                var result2 = context.ADbSet.Any(a => a.Id == -100);
+                Assert.AreEqual(false, result2);
+
+                var result3 = context.ADbSet.Any(a => a.TestBProperty.Id > 0);
+                Assert.AreEqual(true, result3);
+
+                var result4 = context.ADbSet.Any(a => a.Id < 0);
+                Assert.AreEqual(false, result4);
             }
         }
 
@@ -151,34 +230,6 @@ namespace GlobalsFrameworkTest.Tests
             {
                 var data = context.ADbSet.LastOrDefault(a => a.Id == -100);
                 Assert.AreEqual(data, null);
-            }
-        }
-
-        [Test]
-        public void TestAny()
-        {
-            using (var context = new TestDataContext())
-            {
-                var result = context.ADbSet.Any();
-                var result2 = context.ADbSet.Any(a => a.Id == -100);
-
-                Assert.AreEqual(result, true);
-                Assert.AreEqual(result2, false);
-            }
-        }
-
-        [Test]
-        public void TestCount()
-        {
-            using (var context = new TestDataContext())
-            {
-                var result = context.ADbSet.Count();
-                var result2 = context.ADbSet.Count(a => a.TestBProperty.Id > 0);
-                var result3 = context.ADbSet.LongCount();
-
-                Assert.AreEqual(result, 1);
-                Assert.AreEqual(result2, 1);
-                Assert.AreEqual(result3, 1);
             }
         }
 
