@@ -61,7 +61,7 @@ namespace GlobalsFramework.Linq.QueryProcessing
             var count = 0;
 
             while (enumerator.MoveNext())
-                count++;
+                checked { count++; }
 
             return new ProcessingResult(true, count, true);
         }
@@ -71,7 +71,7 @@ namespace GlobalsFramework.Linq.QueryProcessing
             long longCount = 0;
 
             while (enumerator.MoveNext())
-                longCount++;
+                checked { longCount++; }
 
             return new ProcessingResult(true, longCount, true);
         }
