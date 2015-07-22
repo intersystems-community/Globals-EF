@@ -1,0 +1,62 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using GlobalsFramework.Linq.ExpressionProcessing;
+using GlobalsFramework.Linq.Helpers;
+using InterSystems.Globals;
+
+namespace GlobalsFramework.Linq.QueryProcessing
+{
+    internal sealed class AverageQueryProcessor : IQueryProcessor
+    {
+        public bool CanProcess(MethodCallExpression query)
+        {
+            return query.Method.Name == "Average";
+        }
+
+        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
+        {
+            if (!parentResult.IsDeferred())
+                return ProcessingResult.Unsuccessful;
+
+            var unaryExpression = (UnaryExpression) query.Arguments[1];
+
+            var selectorLambda = unaryExpression.Operand as LambdaExpression;
+            if (selectorLambda == null)
+                return ProcessingResult.Unsuccessful;
+
+            var selectorResult = ExpressionProcessingHelper.ProcessExpression(selectorLambda.Body, (List<NodeReference>) parentResult.Result);
+
+            if (!selectorResult.IsSuccess)
+                return ProcessingResult.Unsuccessful;
+
+            if (selectorResult.IsSingleItem)
+            {
+                var result = Convert.ChangeType(selectorResult.Result, QueryProcessingHelper.GetReturnParameterType(query));
+                return new ProcessingResult(true, result, true);
+            }
+
+            var items = selectorResult.GetLoadedItems(QueryProcessingHelper.GetReturnParameterType(query));
+
+            return new ProcessingResult(true, GetAverage(items), true);
+        }
+
+        private static dynamic GetAverage(IEnumerable items)
+        {
+            dynamic sum = 0;
+            var count = 0;
+
+            foreach (dynamic item in items)
+            {
+                sum += item;
+                count++;
+            }
+
+            if (count == 0)
+                throw new InvalidOperationException("Sequence contains no elements");
+
+            return (sum*1.0)/count;
+        }
+    }
+}

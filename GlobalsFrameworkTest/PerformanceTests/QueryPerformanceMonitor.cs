@@ -89,5 +89,11 @@ namespace GlobalsFrameworkTest.PerformanceTests
         {
             var res = context.ADbSet.Select(a => a.TestBProperty.Id).All(id => id >= 0);
         }
+
+        [PerfWatch]
+        private void AverageQuery(TestDataContext context)
+        {
+            var res = context.ADbSet.Average(a => a.Id);
+        }
     }
 }

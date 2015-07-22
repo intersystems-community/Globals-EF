@@ -386,6 +386,41 @@ namespace GlobalsFrameworkTest.Tests
         }
 
         [Test]
+        public void Average()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.Average(a => a);
+                Assert.AreEqual(0, result1);
+
+                var firstElement = context.ADbSet.Select(a => a).First();
+                var result2 = context.ADbSet.Average(a => a.Id);
+                Assert.AreEqual(firstElement.Id, result2);
+
+                var result3 = context.ADbSet.Average(a => a.TestBProperty.Id);
+                Assert.AreEqual(firstElement.TestBProperty.Id, result3);
+
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
+
+                var result4 = context.ADbSet.Average(a => a.Id);
+                var average = ((firstElement.Id*2) + 1)/2.0;
+                Assert.AreEqual(average, result4);
+
+                var result5 = context.ADbSet.Average(a => new TestA(0));
+                Assert.AreEqual(0, result5);
+
+                var result6 = context.ADbSet.Average(a => 4);
+                Assert.AreEqual(4, result6);
+
+                context.ADbSet.DeleteAllOnSubmit(context.ADbSet);
+                context.SubmitChanges();
+
+                Assert.Throws<InvalidOperationException>(() => result2 = context.ADbSet.Average(a => a.Id));
+            }
+        }
+
+        [Test]
         public void TestTake()
         {
             using (var context = new TestDataContext())
