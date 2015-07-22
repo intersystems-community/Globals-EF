@@ -323,8 +323,17 @@ namespace GlobalsFrameworkTest.Tests
         {
             using (var context = new TestDataContext())
             {
-                var data = context.BDbSet.Select(b => b.Array).Last();
-                Assert.AreEqual(data[0].Id, 3);
+                var result1 = context.ADbSet.Where(a => a.E == TestEnum.One).Last();
+                var result2 = context.ADbSet.Last();
+                Assert.AreEqual(result1.Id, result2.Id);
+
+                var result3 = context.ADbSet.Last(a => a.E == TestEnum.One);
+                Assert.AreEqual(result1.Id, result3.Id);
+
+                Assert.Throws<InvalidOperationException>(() => result1 = context.ADbSet.Last(a => a.Id < 0));
+
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
             }
         }
 
@@ -333,8 +342,22 @@ namespace GlobalsFrameworkTest.Tests
         {
             using (var context = new TestDataContext())
             {
-                var data = context.ADbSet.LastOrDefault(a => a.Id == -100);
-                Assert.AreEqual(data, null);
+                var result1 = context.ADbSet.Where(a => a.E == TestEnum.One).LastOrDefault();
+                var result2 = context.ADbSet.LastOrDefault();
+
+                Assert.NotNull(result1);
+                Assert.NotNull(result2);
+                Assert.AreEqual(result1.Id, result2.Id);
+
+                var result3 = context.ADbSet.LastOrDefault(a => a.E == TestEnum.One);
+                Assert.NotNull(result3);
+                Assert.AreEqual(result1.Id, result3.Id);
+
+                var result4 = context.ADbSet.LastOrDefault(a => a.Id < 0);
+                Assert.Null(result4);
+
+                var result5 = context.ADbSet.Select(a => a.C.Value).LastOrDefault(c => c.Id < 0);
+                Assert.AreEqual(default(TestC), result5);
             }
         }
 
