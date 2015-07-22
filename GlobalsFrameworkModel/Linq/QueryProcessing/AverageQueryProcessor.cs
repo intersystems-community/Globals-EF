@@ -20,11 +20,17 @@ namespace GlobalsFramework.Linq.QueryProcessing
             if (!parentResult.IsDeferred())
                 return ProcessingResult.Unsuccessful;
 
-            var unaryExpression = (UnaryExpression) query.Arguments[1];
+            var hasSelector = query.Arguments.Count > 1;
+            var elementType = QueryProcessingHelper.GetReturnParameterType(query);
 
-            var selectorLambda = unaryExpression.Operand as LambdaExpression;
-            if (selectorLambda == null)
-                return ProcessingResult.Unsuccessful;
+            if (!hasSelector)
+            {
+                var items = parentResult.GetLoadedItems(elementType);
+                return new ProcessingResult(true, GetAverage(items), true);
+            }
+
+            var unaryExpression = (UnaryExpression) query.Arguments[1];
+            var selectorLambda = (LambdaExpression)unaryExpression.Operand;
 
             var selectorResult = ExpressionProcessingHelper.ProcessExpression(selectorLambda.Body, (List<NodeReference>) parentResult.Result);
 
@@ -33,13 +39,12 @@ namespace GlobalsFramework.Linq.QueryProcessing
 
             if (selectorResult.IsSingleItem)
             {
-                var result = Convert.ChangeType(selectorResult.Result, QueryProcessingHelper.GetReturnParameterType(query));
+                var result = Convert.ChangeType(selectorResult.Result, elementType);
                 return new ProcessingResult(true, result, true);
             }
 
-            var items = selectorResult.GetLoadedItems(QueryProcessingHelper.GetReturnParameterType(query));
-
-            return new ProcessingResult(true, GetAverage(items), true);
+            var loadedItems = selectorResult.GetLoadedItems(elementType);
+            return new ProcessingResult(true, GetAverage(loadedItems), true);
         }
 
         private static dynamic GetAverage(IEnumerable items)

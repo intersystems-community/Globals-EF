@@ -413,6 +413,19 @@ namespace GlobalsFrameworkTest.Tests
                 var result6 = context.ADbSet.Average(a => 4);
                 Assert.AreEqual(4, result6);
 
+                var result7 = context.ADbSet.Select(a => a.TestBProperty.Id).Average();
+                var average2 = ((firstElement.TestBProperty.Id * 2) + 1) / 2.0;
+                Assert.AreEqual(average2, result7);
+
+                var result8 = context.ADbSet.Select(a => a.Id).Average();
+                Assert.AreEqual(average, result8);
+
+                var result9 = context.ADbSet.Select(a => a.Id).OrderBy(id => id).Average();
+                Assert.AreEqual(average, result9);
+
+                var result10 = context.ADbSet.OrderBy(a => a.Id).Average(a => a.TestBProperty.Id);
+                Assert.AreEqual(average2, result10);
+
                 context.ADbSet.DeleteAllOnSubmit(context.ADbSet);
                 context.SubmitChanges();
 
