@@ -24,7 +24,7 @@ namespace GlobalsFramework.Linq.QueryProcessing
 
         public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
         {
-            return QueryProcessingHelper.ResolvePredicate(query, parentResult, OptimizedHandlers[query.Method.Name]);
+            return QueryProcessingHelper.ProcessSingleResultQuery(query, parentResult, OptimizedHandlers[query.Method.Name]);
         }
 
         private static ProcessingResult ProcessCount(IEnumerator enumerator, Type elementType)

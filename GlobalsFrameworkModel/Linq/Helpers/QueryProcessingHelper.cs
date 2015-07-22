@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using GlobalsFramework.Access;
 using GlobalsFramework.Linq.ExpressionProcessing;
 using GlobalsFramework.Linq.QueryProcessing;
+using GlobalsFramework.Utils.TypeDescription;
 using InterSystems.Globals;
 
 namespace GlobalsFramework.Linq.Helpers
@@ -21,7 +22,8 @@ namespace GlobalsFramework.Linq.Helpers
                 new SelectQueryProcessor(),
                 new WhereQueryProcessor(),
                 new CountQueryProcessor(),
-                new FirstQueryProcessor()
+                new FirstQueryProcessor(),
+                new ElementAtQueryProcessor()
             };
         }
 
@@ -50,13 +52,15 @@ namespace GlobalsFramework.Linq.Helpers
             if (returnParameter == null)
                 throw new InvalidOperationException("Unable to perform operation");
 
+            if (EntityTypeDescriptor.IsNullableType(returnParameter.ParameterType))
+                return returnParameter.ParameterType;
+
             return returnParameter.ParameterType.IsGenericType
                 ? returnParameter.ParameterType.GetGenericArguments().Single()
                 : returnParameter.ParameterType;
         }
 
-        //used for processing not deferred expressions with predicate (count, first, etc.)
-        internal static ProcessingResult ResolvePredicate(MethodCallExpression query, ProcessingResult parentResult,
+        internal static ProcessingResult ProcessSingleResultQuery(MethodCallExpression query, ProcessingResult parentResult,
             Func<IEnumerator, Type, ProcessingResult> queryResolver)
         {
             var hasPredicate = query.Arguments.Count == 2;

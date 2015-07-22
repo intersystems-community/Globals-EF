@@ -24,7 +24,7 @@ namespace GlobalsFramework.Linq.QueryProcessing
 
         public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
         {
-            return QueryProcessingHelper.ResolvePredicate(query, parentResult, OptimizedHandlers[query.Method.Name]);
+            return QueryProcessingHelper.ProcessSingleResultQuery(query, parentResult, OptimizedHandlers[query.Method.Name]);
         }
 
         private static ProcessingResult ProcessFirst(IEnumerator enumerator, Type elementType)
@@ -38,10 +38,7 @@ namespace GlobalsFramework.Linq.QueryProcessing
         private static ProcessingResult ProcessFirstOrDefault(IEnumerator enumerator, Type elementType)
         {
             if (!enumerator.MoveNext())
-            {
-                var result = elementType.IsClass ? null : InstanceCreator.CreateInstance(elementType);
-                return new ProcessingResult(true, result, true);
-            }
+                return new ProcessingResult(true, InstanceCreator.GetDefaultValue(elementType), true);
 
             return new ProcessingResult(true, enumerator.Current, true);
         }

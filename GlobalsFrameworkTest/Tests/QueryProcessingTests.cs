@@ -205,12 +205,64 @@ namespace GlobalsFrameworkTest.Tests
                 Assert.NotNull(result3);
                 Assert.AreEqual(result1.Id, result3.Id);
 
-
                 var result4 = context.ADbSet.FirstOrDefault(a => a.Id < 0);
                 Assert.Null(result4);
 
                 var result5 = context.ADbSet.Select(a => a.C.Value).FirstOrDefault(c => c.Id < 0);
                 Assert.AreEqual(default(TestC), result5);
+            }
+        }
+
+        [Test]
+        public void TestElementAt()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.ElementAt(0);
+                var result2 = context.ADbSet.First();
+
+                Assert.AreEqual(result1.Id, result2.Id);
+
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
+
+                var result3 = context.ADbSet.ElementAt(1);
+                var result4 = context.ADbSet.ToList();
+                Assert.AreEqual(result4[1].Id, result3.Id);
+
+                Assert.Throws<ArgumentOutOfRangeException>(() => result3 = context.ADbSet.ElementAt(3));
+
+                var result5 = context.ADbSet.Select(a => a.C).ElementAt(1);
+
+                Assert.True(result5.HasValue);
+                Assert.AreEqual(5, result5.Value.Id);
+            }
+        }
+
+        [Test]
+        public void TestElementAtOrDefault()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.ElementAtOrDefault(0);
+                var result2 = context.ADbSet.First();
+
+                Assert.NotNull(result1);
+                Assert.AreEqual(result1.Id, result2.Id);
+
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
+
+                var result3 = context.ADbSet.ElementAtOrDefault(1);
+                var result4 = context.ADbSet.ToList();
+
+                Assert.NotNull(result3);
+                Assert.AreEqual(result4[1].Id, result3.Id);
+
+                Assert.Null(context.ADbSet.ElementAtOrDefault(4));
+
+                var result5 = context.ADbSet.Select(i => i.C).ElementAtOrDefault(3);
+                Assert.Null(result5);
             }
         }
 
@@ -252,29 +304,6 @@ namespace GlobalsFrameworkTest.Tests
             {
                 var data = context.ADbSet.LastOrDefault(a => a.Id == -100);
                 Assert.AreEqual(data, null);
-            }
-        }
-
-        [Test]
-        public void TestElementAt()
-        {
-            using (var context = new TestDataContext())
-            {
-                var data1 = context.ADbSet.ElementAt(0);
-                var data2 = context.ADbSet.First();
-
-                Assert.AreEqual(data1.Id, data2.Id);
-            }
-        }
-
-        [Test]
-        public void TestElementAtOrDefault()
-        {
-            using (var context = new TestDataContext())
-            {
-                var data1 = context.ADbSet.ElementAtOrDefault(-100);
-
-                Assert.AreEqual(data1, null);
             }
         }
 

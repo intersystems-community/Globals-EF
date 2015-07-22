@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using GlobalsFramework.Utils.TypeDescription;
 
 namespace GlobalsFramework.Utils.InstanceCreation
 {
@@ -18,6 +19,13 @@ namespace GlobalsFramework.Utils.InstanceCreation
                 ? CreateInstance(a.ParameterType)
                 : null);
             return constructor.Invoke(argumentsValues.ToArray());
+        }
+
+        internal static object GetDefaultValue(Type instanceType)
+        {
+            return ((instanceType.IsClass) || (EntityTypeDescriptor.IsNullableType(instanceType)))
+                ? null
+                : CreateInstance(instanceType);
         }
     }
 }
