@@ -40,9 +40,10 @@ namespace GlobalsFramework.Linq.Helpers
 
             var lambdaExpression = unaryExpression.Operand as LambdaExpression;
 
-            return (lambdaExpression != null)
-                ? ProcessPredicateInternal(lambdaExpression.Body, references.ToList())
-                : ProcessingResult.Unsuccessful;
+            if ((lambdaExpression == null) || (lambdaExpression.Parameters.Count > 1))
+                return ProcessingResult.Unsuccessful;
+
+            return ProcessPredicateInternal(lambdaExpression.Body, references.ToList());
         }
 
         internal static ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references)

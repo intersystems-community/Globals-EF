@@ -23,6 +23,9 @@ namespace GlobalsFramework.Linq.QueryProcessing
             var unaryExpression = (UnaryExpression)query.Arguments[1];
             var lambdaExpression = (LambdaExpression)unaryExpression.Operand;
 
+            if (lambdaExpression.Parameters.Count > 1)
+                return ProcessingResult.Unsuccessful;
+
             var memberExpression = lambdaExpression.Body;
             var nodeReferences = (List<NodeReference>) parentResult.Result;
 

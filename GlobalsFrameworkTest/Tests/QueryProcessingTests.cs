@@ -89,7 +89,10 @@ namespace GlobalsFrameworkTest.Tests
                 Assert.AreEqual(3, bData5);
 
                 var bData6 = context.BDbSet.Select(b => b.Array5[0, 1, 1].Id).Single();
-                Assert.AreEqual(7, bData6);  
+                Assert.AreEqual(7, bData6);
+
+                var bData7 = context.BDbSet.Select((element, index) => index).ToList();
+                Assert.AreEqual(0, bData7[0]);
             }
         }
 
