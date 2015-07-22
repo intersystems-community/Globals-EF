@@ -184,7 +184,6 @@ namespace GlobalsFrameworkTest.Tests
                 var result3 = context.ADbSet.First(a => a.E == TestEnum.One);
                 Assert.AreEqual(result1.Id, result3.Id);
 
-
                 Assert.Throws<InvalidOperationException>(() => result1 = context.ADbSet.First(a => a.Id < 0));
             }
         }
@@ -271,9 +270,19 @@ namespace GlobalsFrameworkTest.Tests
         {
             using (var context = new TestDataContext())
             {
-                var data = context.ADbSet.Where(a => a.L1.Count == 4).Single();
-                var data2 = context.ADbSet.Single();
-                Assert.AreEqual(data.Id, data2.Id);
+                var result1 = context.ADbSet.Where(a => a.E == TestEnum.One).Single();
+                var result2 = context.ADbSet.Single();
+                Assert.AreEqual(result1.Id, result2.Id);
+
+                var result3 = context.ADbSet.Single(a => a.E == TestEnum.One);
+                Assert.AreEqual(result1.Id, result3.Id);
+
+                Assert.Throws<InvalidOperationException>(() => result1 = context.ADbSet.Single(a => a.Id < 0));
+
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
+
+                Assert.Throws<InvalidOperationException>(() => result1 = context.ADbSet.Single(a => a.Id >= 0));
             }
         }
 
@@ -282,8 +291,27 @@ namespace GlobalsFrameworkTest.Tests
         {
             using (var context = new TestDataContext())
             {
-                var data = context.ADbSet.Where(a => a.Id == -100).SingleOrDefault();
-                Assert.AreEqual(data, null);
+                var result1 = context.ADbSet.Where(a => a.E == TestEnum.One).SingleOrDefault();
+                var result2 = context.ADbSet.SingleOrDefault();
+
+                Assert.NotNull(result1);
+                Assert.NotNull(result2);
+                Assert.AreEqual(result1.Id, result2.Id);
+
+                var result3 = context.ADbSet.SingleOrDefault(a => a.E == TestEnum.One);
+                Assert.NotNull(result3);
+                Assert.AreEqual(result1.Id, result3.Id);
+
+                var result4 = context.ADbSet.SingleOrDefault(a => a.Id < 0);
+                Assert.Null(result4);
+
+                var result5 = context.ADbSet.Select(a => a.C.Value).SingleOrDefault(c => c.Id < 0);
+                Assert.AreEqual(default(TestC), result5);
+
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
+
+                Assert.Throws<InvalidOperationException>(() => result1 = context.ADbSet.SingleOrDefault(a => a.Id >= 0));
             }
         }
 

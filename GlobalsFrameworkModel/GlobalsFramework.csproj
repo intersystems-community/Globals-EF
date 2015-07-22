@@ -98,6 +98,7 @@
     <Compile Include="Linq\QueryProcessing\FirstQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\IQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\SelectQueryProcessor.cs" />
+    <Compile Include="Linq\QueryProcessing\SingleQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\WhereQueryProcessor.cs" />
     <Compile Include="Utils\ConnectionManagement\ConnectionParameters.cs" />
     <Compile Include="Utils\InstanceCreation\InstanceCreator.cs" />

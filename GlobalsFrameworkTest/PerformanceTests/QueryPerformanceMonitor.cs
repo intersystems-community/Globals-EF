@@ -59,5 +59,17 @@ namespace GlobalsFrameworkTest.PerformanceTests
         {
             var res = context.ADbSet.Select(a => a.TestBProperty.Id).ElementAtOrDefault(0);
         }
+
+        [PerfWatch]
+        private void SingleQuery(TestDataContext context)
+        {
+            var res = context.ADbSet.Select(a => a.TestBProperty.Id).Single(id => id >= 0);
+        }
+
+        [PerfWatch]
+        private void SingleOrDefaultQuery(TestDataContext context)
+        {
+            var res = context.ADbSet.Select(a => a.TestBProperty.Id).SingleOrDefault(id => id >= 0);
+        }
     }
 }

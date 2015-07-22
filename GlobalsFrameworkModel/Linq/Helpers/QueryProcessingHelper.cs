@@ -23,7 +23,8 @@ namespace GlobalsFramework.Linq.Helpers
                 new WhereQueryProcessor(),
                 new CountQueryProcessor(),
                 new FirstQueryProcessor(),
-                new ElementAtQueryProcessor()
+                new ElementAtQueryProcessor(),
+                new SingleQueryProcessor()
             };
         }
 
