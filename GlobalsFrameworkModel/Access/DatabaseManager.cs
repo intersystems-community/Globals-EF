@@ -2,10 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using GlobalsFramework.Exceptions;
+using GlobalsFramework.Utils.InstanceCreation;
 using GlobalsFramework.Utils.PrimaryKeyCalculation;
 using GlobalsFramework.Utils.TypeDescription;
 using InterSystems.Globals;
@@ -186,7 +185,7 @@ namespace GlobalsFramework.Access
 
             var typeDescription = EntityTypeDescriptor.GetTypeDescription(underlyingType);
 
-            var instance = CreateComplexInstance(underlyingType);
+            var instance = InstanceCreator.CreateInstance(underlyingType);
 
             foreach (var column in typeDescription.Columns)
             {
@@ -550,19 +549,6 @@ namespace GlobalsFramework.Access
         {
             var indexes = Regex.Replace(subscriptString, @"{(\S*)}", "$1");
             return indexes.Split(',').Select(i => Convert.ToInt32(i)).ToArray();
-        }
-
-        private static object CreateComplexInstance(Type instanceType)
-        {
-            var constructor = instanceType.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault();
-            if (constructor == null)
-                return FormatterServices.GetUninitializedObject(instanceType);
-
-            var arguments = constructor.GetParameters();
-            var argumentsValues = arguments.Select(a => a.ParameterType.IsValueType
-                ? CreateComplexInstance(a.ParameterType)
-                : null);
-            return constructor.Invoke(argumentsValues.ToArray());
         }
     }
 }
