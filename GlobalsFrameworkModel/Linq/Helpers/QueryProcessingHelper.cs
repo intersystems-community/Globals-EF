@@ -25,7 +25,8 @@ namespace GlobalsFramework.Linq.Helpers
                 new FirstQueryProcessor(),
                 new ElementAtQueryProcessor(),
                 new SingleQueryProcessor(),
-                new LastQueryProcessor()
+                new LastQueryProcessor(),
+                new AllQueryProcessor()
             };
         }
 

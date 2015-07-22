@@ -362,6 +362,30 @@ namespace GlobalsFrameworkTest.Tests
         }
 
         [Test]
+        public void All()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.All(a => a.E == TestEnum.One);
+                Assert.AreEqual(true, result1);
+
+                var resul2 = context.ADbSet.All(a => a.Id < 0);
+                Assert.AreEqual(false, resul2);
+
+                var result3 = context.ADbSet.OrderBy(a => a.Id).All(a => a.Id >= 0);
+                Assert.AreEqual(true, result3);
+
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
+
+                var firstId = context.ADbSet.Select(a => a.Id).First();
+                var result4 = context.ADbSet.All(a => a.Id <= firstId);
+                Assert.AreEqual(false, result4);
+
+            }
+        }
+
+        [Test]
         public void TestTake()
         {
             using (var context = new TestDataContext())
