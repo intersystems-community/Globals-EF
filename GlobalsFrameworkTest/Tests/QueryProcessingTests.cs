@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GlobalsFrameworkTest.Data;
 using NUnit.Framework;
@@ -176,9 +177,15 @@ namespace GlobalsFrameworkTest.Tests
         {
             using (var context = new TestDataContext())
             {
-                var data = context.ADbSet.Where(a => a.E == TestEnum.One).First();
-                var data2 = context.ADbSet.First();
-                Assert.AreEqual(data.Id, data2.Id);
+                var result1 = context.ADbSet.Where(a => a.E == TestEnum.One).First();
+                var result2 = context.ADbSet.First();
+                Assert.AreEqual(result1.Id, result2.Id);
+
+                var result3 = context.ADbSet.First(a => a.E == TestEnum.One);
+                Assert.AreEqual(result1.Id, result3.Id);
+
+
+                Assert.Throws<InvalidOperationException>(() => result1 = context.ADbSet.First(a => a.Id < 0));
             }
         }
 
@@ -187,8 +194,23 @@ namespace GlobalsFrameworkTest.Tests
         {
             using (var context = new TestDataContext())
             {
-                var data = context.ADbSet.Where(a => a.Id == -100).FirstOrDefault();
-                Assert.AreEqual(data, null);
+                var result1 = context.ADbSet.Where(a => a.E == TestEnum.One).FirstOrDefault();
+                var result2 = context.ADbSet.FirstOrDefault();
+
+                Assert.NotNull(result1);
+                Assert.NotNull(result2);
+                Assert.AreEqual(result1.Id, result2.Id);
+
+                var result3 = context.ADbSet.FirstOrDefault(a => a.E == TestEnum.One);
+                Assert.NotNull(result3);
+                Assert.AreEqual(result1.Id, result3.Id);
+
+
+                var result4 = context.ADbSet.FirstOrDefault(a => a.Id < 0);
+                Assert.Null(result4);
+
+                var result5 = context.ADbSet.Select(a => a.C.Value).FirstOrDefault(c => c.Id < 0);
+                Assert.AreEqual(default(TestC), result5);
             }
         }
 

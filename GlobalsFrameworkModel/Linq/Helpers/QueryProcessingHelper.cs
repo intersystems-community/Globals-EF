@@ -20,7 +20,8 @@ namespace GlobalsFramework.Linq.Helpers
             {
                 new SelectQueryProcessor(),
                 new WhereQueryProcessor(),
-                new CountQueryProcessor()
+                new CountQueryProcessor(),
+                new FirstQueryProcessor()
             };
         }
 
@@ -32,9 +33,14 @@ namespace GlobalsFramework.Linq.Helpers
             var result = new ProcessingResult(true, nodes);
             result = queries.Aggregate(result, (current, query) => ProcessQuery(query, current));
 
-            return result.IsDeferred()
-                ? result.GetLoadedItems(GetReturnParameterType(queries.Last()))
-                : result.Result;
+            if (result.IsDeferred())
+            {
+                return result.IsSingleItem
+                    ? result.GetLoadedItem(GetReturnParameterType(queries.Last()))
+                    : result.GetLoadedItems(GetReturnParameterType(queries.Last()));
+            }
+
+            return result.Result;
         }
 
         internal static Type GetReturnParameterType(MethodCallExpression query)
@@ -47,6 +53,26 @@ namespace GlobalsFramework.Linq.Helpers
             return returnParameter.ParameterType.IsGenericType
                 ? returnParameter.ParameterType.GetGenericArguments().Single()
                 : returnParameter.ParameterType;
+        }
+
+        //used for processing not deferred expressions with predicate (count, first, etc.)
+        internal static ProcessingResult ResolvePredicate(MethodCallExpression query, ProcessingResult parentResult,
+            Func<IEnumerator, Type, ProcessingResult> queryResolver)
+        {
+            var hasPredicate = query.Arguments.Count == 2;
+
+            if (!hasPredicate)
+                return queryResolver(parentResult.GetItems().GetEnumerator(), GetReturnParameterType(query));
+
+            if (!parentResult.IsDeferred())
+                return ProcessingResult.Unsuccessful;
+
+            var predicate = query.Arguments[1];
+            var predicateResult = ExpressionProcessingHelper.ProcessPredicate(predicate, parentResult.GetDeferredItems());
+
+            return predicateResult.IsSuccess
+                ? queryResolver(predicateResult.GetItems().GetEnumerator(), GetReturnParameterType(query))
+                : ProcessingResult.Unsuccessful;
         }
 
         private static ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
@@ -125,5 +151,6 @@ namespace GlobalsFramework.Linq.Helpers
                 ? sourceParameter.ParameterType.GetGenericArguments().Single()
                 : sourceParameter.ParameterType;
         }
+
     }
 }

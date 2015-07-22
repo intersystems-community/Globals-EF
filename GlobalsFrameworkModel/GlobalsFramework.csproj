@@ -94,10 +94,12 @@
     <Compile Include="Linq\DbSet.cs" />
     <Compile Include="Linq\Helpers\ExpressionProcessingHelper.cs" />
     <Compile Include="Linq\QueryProcessing\CountQueryProcessor.cs" />
+    <Compile Include="Linq\QueryProcessing\FirstQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\IQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\SelectQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\WhereQueryProcessor.cs" />
     <Compile Include="Utils\ConnectionManagement\ConnectionParameters.cs" />
+    <Compile Include="Utils\InstanceCreation\InstanceCreator.cs" />
     <Compile Include="Utils\PrimaryKeyCalculation\CryptoProvider.cs" />
     <Compile Include="Utils\ConnectionManagement\ConnectionManager.cs" />
     <Compile Include="Utils\ConnectionManagement\ThreadResult.cs" />

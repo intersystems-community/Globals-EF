@@ -4,19 +4,19 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using GlobalsFramework.Linq.ExpressionProcessing;
 using GlobalsFramework.Linq.Helpers;
+using GlobalsFramework.Utils.InstanceCreation;
 
 namespace GlobalsFramework.Linq.QueryProcessing
 {
-    internal sealed class CountQueryProcessor : IQueryProcessor
+    internal sealed class FirstQueryProcessor : IQueryProcessor
     {
         private static readonly Dictionary<string, Func<IEnumerator, Type, ProcessingResult>> OptimizedHandlers =
             new Dictionary<string, Func<IEnumerator, Type, ProcessingResult>>
             {
-                {"Count", ProcessCount},
-                {"LongCount", ProcessLongCount},
-                {"Any", ProcessAny}
+                {"First", ProcessFirst},
+                {"FirstOrDefault", ProcessFirstOrDefault},
             };
- 
+
         public bool CanProcess(MethodCallExpression query)
         {
             return OptimizedHandlers.ContainsKey(query.Method.Name);
@@ -27,29 +27,23 @@ namespace GlobalsFramework.Linq.QueryProcessing
             return QueryProcessingHelper.ResolvePredicate(query, parentResult, OptimizedHandlers[query.Method.Name]);
         }
 
-        private static ProcessingResult ProcessCount(IEnumerator enumerator, Type elementType)
+        private static ProcessingResult ProcessFirst(IEnumerator enumerator, Type elementType)
         {
-            var count = 0;
+            if (!enumerator.MoveNext())
+                throw new InvalidOperationException("Sequence contains no elements");
 
-            while (enumerator.MoveNext())
-                checked { count++; }
-
-            return new ProcessingResult(true, count, true);
+            return new ProcessingResult(true, enumerator.Current, true);
         }
 
-        private static ProcessingResult ProcessLongCount(IEnumerator enumerator, Type elementType)
+        private static ProcessingResult ProcessFirstOrDefault(IEnumerator enumerator, Type elementType)
         {
-            long longCount = 0;
+            if (!enumerator.MoveNext())
+            {
+                var result = elementType.IsClass ? null : InstanceCreator.CreateInstance(elementType);
+                return new ProcessingResult(true, result, true);
+            }
 
-            while (enumerator.MoveNext())
-                checked { longCount++; }
-
-            return new ProcessingResult(true, longCount, true);
-        }
-
-        private static ProcessingResult ProcessAny(IEnumerator enumerator, Type elementType)
-        {
-            return new ProcessingResult(true, enumerator.MoveNext(), true);
+            return new ProcessingResult(true, enumerator.Current, true);
         }
     }
 }
