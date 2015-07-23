@@ -294,5 +294,18 @@ namespace GlobalsFrameworkTest.Data
         Two
     }
 
+    public class TestComparer : IEqualityComparer<TestC>
+    {
+        public bool Equals(TestC x, TestC y)
+        {
+            return true;
+        }
+
+        public int GetHashCode(TestC obj)
+        {
+            return 0;
+        }
+    }
+
     #endregion
 }

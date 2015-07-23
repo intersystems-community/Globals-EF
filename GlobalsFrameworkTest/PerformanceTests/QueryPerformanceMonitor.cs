@@ -102,5 +102,11 @@ namespace GlobalsFrameworkTest.PerformanceTests
         {
             var res = context.ADbSet.Select(a => a.Id).Concat(new List<int> {2, 3}).Count();
         }
+
+        [PerfWatch]
+        private void ContainsQuery(TestDataContext context)
+        {
+            var res = context.ADbSet.Select(a => a.TestBProperty.Id.Value).Contains(7);
+        }
     }
 }

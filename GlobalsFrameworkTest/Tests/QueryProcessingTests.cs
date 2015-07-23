@@ -488,6 +488,25 @@ namespace GlobalsFrameworkTest.Tests
         }
 
         [Test]
+        public void Contains()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.Contains(new TestA(0));
+                Assert.AreEqual(false, result1);
+
+                var result2 = context.ADbSet.Select(a => a.C.Value).OrderBy(a => a.Id).Contains(default(TestC));
+                Assert.AreEqual(false, result2);
+
+                var result3 = context.ADbSet.Select(a => a.C.Value).OrderBy(c => c.Id).Contains(default(TestC),new TestComparer());
+                Assert.AreEqual(true, result3);
+
+                var result4 = context.ADbSet.Select(a => a.C.Value.Id).Contains(5);
+                Assert.AreEqual(true, result4);
+            }
+        }
+
+        [Test]
         public void TestTake()
         {
             using (var context = new TestDataContext())

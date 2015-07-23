@@ -28,7 +28,8 @@ namespace GlobalsFramework.Linq.Helpers
                 new LastQueryProcessor(),
                 new AllQueryProcessor(),
                 new AverageQueryProcessor(),
-                new ConcatQueryProcessor()
+                new ConcatQueryProcessor(),
+                new ContainsQueryProcessor()
             };
         }
 
