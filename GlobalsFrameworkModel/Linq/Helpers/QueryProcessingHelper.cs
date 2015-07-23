@@ -27,7 +27,8 @@ namespace GlobalsFramework.Linq.Helpers
                 new SingleQueryProcessor(),
                 new LastQueryProcessor(),
                 new AllQueryProcessor(),
-                new AverageQueryProcessor()
+                new AverageQueryProcessor(),
+                new ConcatQueryProcessor()
             };
         }
 
@@ -62,6 +63,22 @@ namespace GlobalsFramework.Linq.Helpers
             return returnParameter.ParameterType.IsGenericType
                 ? returnParameter.ParameterType.GetGenericArguments().Single()
                 : returnParameter.ParameterType;
+        }
+
+        internal static Type GetSourceParameterType(MethodCallExpression query)
+        {
+            //source parameter always at first place
+            var sourceParameter = query.Method.GetParameters().First();
+
+            var parameterType = sourceParameter.ParameterType.IsGenericType
+                ? sourceParameter.ParameterType.GetGenericArguments().Single()
+                : sourceParameter.ParameterType;
+
+            if (parameterType != typeof(IQueryable))
+                return parameterType;
+
+            var parentType = query.Arguments[0].Type;
+            return parentType.GetGenericArguments()[0];
         }
 
         internal static ProcessingResult ProcessSingleResultQuery(MethodCallExpression query, ProcessingResult parentResult,
@@ -108,19 +125,9 @@ namespace GlobalsFramework.Linq.Helpers
 
         private static object InvokeQuery(MethodCallExpression query, object sourse)
         {
-            //source parameter always at first place
-            var methodParameters = query.Method.GetParameters().Skip(1).ToList();
-            var invocationParameters = new List<object>(methodParameters.Count()) {((IEnumerable) sourse).AsQueryable()};
+            var invocationParameters = new List<object>{((IEnumerable) sourse).AsQueryable()};
+            invocationParameters.AddRange(query.Arguments.Skip(1).Select(ResolveQueryArgument));
 
-            foreach (var methodParameter in methodParameters)
-            {
-                var expressionArgument = query.Arguments.Single(arg => arg.Type == methodParameter.ParameterType);
-
-                if (expressionArgument is UnaryExpression)
-                    invocationParameters.Add((expressionArgument as UnaryExpression).Operand);
-                else
-                    invocationParameters.Add(((ConstantExpression) expressionArgument).Value);
-            }
             try
             {
                 return query.Method.Invoke(null, invocationParameters.ToArray());
@@ -131,6 +138,26 @@ namespace GlobalsFramework.Linq.Helpers
                 //TargetInvocationException must be displayed
                 throw e.InnerException;
             }
+        }
+
+        private static object ResolveQueryArgument(Expression argumentExpression)
+        {
+            var unaryExpression = argumentExpression as UnaryExpression;
+            if (unaryExpression != null)
+                return unaryExpression.Operand;
+
+            var constantExpression = argumentExpression as ConstantExpression;
+            if (constantExpression != null)
+                return constantExpression.Value;
+
+            var callExpression = argumentExpression as MethodCallExpression;
+            if (callExpression != null)
+            {
+                return ProcessQuery(callExpression,
+                    new ProcessingResult(true, ResolveQueryArgument(callExpression.Arguments[0]))).Result;
+            }
+
+            throw new NotSupportedException("Unable to process query argument");
         }
 
         private static List<MethodCallExpression> GetQueriesInTurn(Expression query)
@@ -149,22 +176,5 @@ namespace GlobalsFramework.Linq.Helpers
 
             return result;
         }
-
-        private static Type GetSourceParameterType(MethodCallExpression query)
-        {
-            //source parameter always at first place
-            var sourceParameter = query.Method.GetParameters().First();
-
-            var parameterType = sourceParameter.ParameterType.IsGenericType
-                ? sourceParameter.ParameterType.GetGenericArguments().Single()
-                : sourceParameter.ParameterType;
-
-            if (parameterType != typeof (IQueryable)) 
-                return parameterType;
-
-            var parentType = query.Arguments[0].Type;
-            return parentType.GetGenericArguments()[0];
-        }
-
     }
 }

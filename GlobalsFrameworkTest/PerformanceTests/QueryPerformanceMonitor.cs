@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using GlobalsFrameworkTest.Data;
 using GlobalsFrameworkTest.PerformanceDiagnostics;
 
@@ -94,6 +95,12 @@ namespace GlobalsFrameworkTest.PerformanceTests
         private void AverageQuery(TestDataContext context)
         {
             var res = context.ADbSet.Average(a => a.Id);
+        }
+
+        [PerfWatch]
+        private void ConcatQuery(TestDataContext context)
+        {
+            var res = context.ADbSet.Select(a => a.Id).Concat(new List<int> {2, 3}).Count();
         }
     }
 }

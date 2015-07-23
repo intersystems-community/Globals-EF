@@ -464,6 +464,30 @@ namespace GlobalsFrameworkTest.Tests
         }
 
         [Test]
+        public void Concat()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.Concat(context.ADbSet).Count();
+                Assert.AreEqual(2, result1);
+
+                var result2 = context.ADbSet.OrderBy(a => a.Id).Concat(context.ADbSet).Count();
+                Assert.AreEqual(2, result2);
+
+                var result3 = context.ADbSet.Select(a => a.Id).Concat(new List<int> {2, 3}).Count();
+                Assert.AreEqual(3, result3);
+
+                var result4 = context.ADbSet.Select(a => a.Id).Concat(new List<int>()).Count();
+                Assert.AreEqual(1, result4);
+
+                var result5 = context.ADbSet.Select(a => a.Id).Concat(context.ADbSet.Select(a => a.Id)).Count();
+                Assert.AreEqual(2, result5);
+
+                Assert.Throws<ArgumentNullException>(() => result4 = context.ADbSet.Concat(null).Count());
+            }
+        }
+
+        [Test]
         public void TestTake()
         {
             using (var context = new TestDataContext())

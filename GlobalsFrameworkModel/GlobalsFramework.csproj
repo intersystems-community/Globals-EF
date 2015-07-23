@@ -95,6 +95,7 @@
     <Compile Include="Linq\Helpers\ExpressionProcessingHelper.cs" />
     <Compile Include="Linq\QueryProcessing\AllQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\AverageQueryProcessor.cs" />
+    <Compile Include="Linq\QueryProcessing\ConcatQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\CountQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\ElementAtQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\FirstQueryProcessor.cs" />
