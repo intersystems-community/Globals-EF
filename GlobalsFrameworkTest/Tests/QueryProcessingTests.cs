@@ -434,6 +434,36 @@ namespace GlobalsFrameworkTest.Tests
         }
 
         [Test]
+        public void ConvertQueries()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.Cast<TestA>().Count();
+                Assert.AreEqual(1, result1);
+
+                var result2 = context.ADbSet.Select(a=>a.Id).Cast<int>().Count();
+                Assert.AreEqual(1, result2);
+
+                var result3 = context.ADbSet.Select(a => a.Id).OrderBy(i => i).Cast<int>().Count();
+                Assert.AreEqual(1, result3);
+
+                Assert.Throws<InvalidCastException>(() => result3 = context.ADbSet.Cast<int>().Count());
+
+                var result4 = context.ADbSet.OfType<TestA>().Count();
+                Assert.AreEqual(1, result4);
+
+                var result5 = context.ADbSet.Select(a => a.Id).OfType<int>().Count();
+                Assert.AreEqual(1, result5);
+
+                var result6 = context.ADbSet.Select(a => a.Id).OrderBy(i => i).OfType<int>().Count();
+                Assert.AreEqual(1, result6);
+
+                var result7 = context.ADbSet.OfType<int>().Count();
+                Assert.AreEqual(0, result7);
+            }
+        }
+
+        [Test]
         public void TestTake()
         {
             using (var context = new TestDataContext())

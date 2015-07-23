@@ -155,9 +155,15 @@ namespace GlobalsFramework.Linq.Helpers
             //source parameter always at first place
             var sourceParameter = query.Method.GetParameters().First();
 
-            return sourceParameter.ParameterType.IsGenericType
+            var parameterType = sourceParameter.ParameterType.IsGenericType
                 ? sourceParameter.ParameterType.GetGenericArguments().Single()
                 : sourceParameter.ParameterType;
+
+            if (parameterType != typeof (IQueryable)) 
+                return parameterType;
+
+            var parentType = query.Arguments[0].Type;
+            return parentType.GetGenericArguments()[0];
         }
 
     }
