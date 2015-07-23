@@ -503,6 +503,9 @@ namespace GlobalsFrameworkTest.Tests
 
                 var result4 = context.ADbSet.Select(a => a.C.Value.Id).Contains(5);
                 Assert.AreEqual(true, result4);
+
+                var result5 = context.ADbSet.Select(a => a.TestBProperty).Contains(new TestB(0));
+                Assert.AreEqual(true, result5);
             }
         }
 

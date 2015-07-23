@@ -162,7 +162,7 @@ namespace GlobalsFrameworkTest.Data
         public int Id;
     }
 
-    public class TestB
+    public class TestB : IEquatable<TestB>
     {
         [Column(Name = "Key", IsPrimaryKey = true, IsDbGenerated = true)]
         public int? Id { get; set; }
@@ -196,6 +196,11 @@ namespace GlobalsFrameworkTest.Data
         public static TestB operator -(TestB value)
         {
             return new TestB(4) {Id = 4};
+        }
+
+        public bool Equals(TestB other)
+        {
+            return true;
         }
     }
 
