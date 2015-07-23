@@ -23,7 +23,7 @@ namespace GlobalsFramework.Utils.InstanceCreation
 
         internal static object GetDefaultValue(Type instanceType)
         {
-            return ((instanceType.IsClass) || (EntityTypeDescriptor.IsNullableType(instanceType)))
+            return ((!instanceType.IsValueType) || (EntityTypeDescriptor.IsNullableType(instanceType)))
                 ? null
                 : CreateInstance(instanceType);
         }
