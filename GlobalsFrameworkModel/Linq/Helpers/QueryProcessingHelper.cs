@@ -59,28 +59,18 @@ namespace GlobalsFramework.Linq.Helpers
             if (returnParameter == null)
                 throw new InvalidOperationException("Unable to perform operation");
 
-            if (EntityTypeDescriptor.IsNullableType(returnParameter.ParameterType))
-                return returnParameter.ParameterType;
-
-            return returnParameter.ParameterType.IsGenericType
-                ? returnParameter.ParameterType.GetGenericArguments().Single()
-                : returnParameter.ParameterType;
+            var parentType = query.Arguments[0].Type;
+            return ResolveParameterType(returnParameter.ParameterType, parentType);
         }
 
         internal static Type GetSourceParameterType(MethodCallExpression query)
         {
             //source parameter always at first place
             var sourceParameter = query.Method.GetParameters().First();
-
-            var parameterType = sourceParameter.ParameterType.IsGenericType
-                ? sourceParameter.ParameterType.GetGenericArguments().Single()
-                : sourceParameter.ParameterType;
-
-            if (parameterType != typeof(IQueryable))
-                return parameterType;
-
+            var sourceType = sourceParameter.ParameterType;
             var parentType = query.Arguments[0].Type;
-            return parentType.GetGenericArguments()[0];
+
+            return ResolveParameterType(sourceType, parentType);
         }
 
         internal static ProcessingResult ProcessSingleResultQuery(MethodCallExpression query, ProcessingResult parentResult,
@@ -177,6 +167,22 @@ namespace GlobalsFramework.Linq.Helpers
             result.Reverse();
 
             return result;
+        }
+
+        private static Type ResolveParameterType(Type type, Type parentType)
+        {
+            if (EntityTypeDescriptor.IsNullableType(type))
+                return type;
+
+            if (type == typeof (IQueryable))
+                return parentType.GetGenericArguments().First();
+
+            var genericArguments = type.GetGenericArguments();
+
+            if (genericArguments.Length == 1)
+                return genericArguments.Single();
+
+            return type;
         }
     }
 }
