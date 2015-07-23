@@ -507,6 +507,37 @@ namespace GlobalsFrameworkTest.Tests
         }
 
         [Test]
+        public void DefaultIfEmpty()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.DefaultIfEmpty(new TestA(0) {Id = -3}).First();
+                Assert.GreaterOrEqual(result1.Id, 0);
+
+                var result2 = context.ADbSet.Cast<TestA>().DefaultIfEmpty(new TestA(0)).First();
+                Assert.GreaterOrEqual(result2.Id, 0);
+
+                context.ADbSet.DeleteAllOnSubmit(context.ADbSet);
+                context.SubmitChanges();
+
+                var result3 = context.ADbSet.DefaultIfEmpty(new TestA(0)).First();
+                Assert.AreEqual(0, result3.Id);
+
+                var result4 = context.ADbSet.Cast<TestA>().DefaultIfEmpty(new TestA(0) {Id = -3}).First();
+                Assert.AreEqual(-3, result4.Id);
+
+                var result5 = context.ADbSet.Cast<TestA>().DefaultIfEmpty().First();
+                Assert.AreEqual(null, result5);
+
+                var result6 = context.ADbSet.DefaultIfEmpty().First();
+                Assert.AreEqual(null, result6);
+
+                var result7 = context.ADbSet.Select(a=>a.C.Value).DefaultIfEmpty().First();
+                Assert.AreEqual(0, result7.Id);
+            }
+        }
+
+        [Test]
         public void TestTake()
         {
             using (var context = new TestDataContext())

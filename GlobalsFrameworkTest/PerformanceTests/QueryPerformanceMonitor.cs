@@ -108,5 +108,11 @@ namespace GlobalsFrameworkTest.PerformanceTests
         {
             var res = context.ADbSet.Select(a => a.TestBProperty.Id.Value).Contains(7);
         }
+
+        [PerfWatch]
+        private void DefaultIfEmpty(TestDataContext context)
+        {
+            var res = context.ADbSet.Select(a => a.Id).DefaultIfEmpty().ToList();
+        }
     }
 }

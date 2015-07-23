@@ -29,7 +29,8 @@ namespace GlobalsFramework.Linq.Helpers
                 new AllQueryProcessor(),
                 new AverageQueryProcessor(),
                 new ConcatQueryProcessor(),
-                new ContainsQueryProcessor()
+                new ContainsQueryProcessor(),
+                new DefaultIfEmptyProcessor()
             };
         }
 
