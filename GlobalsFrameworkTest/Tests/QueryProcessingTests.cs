@@ -93,6 +93,12 @@ namespace GlobalsFrameworkTest.Tests
 
                 var bData7 = context.BDbSet.Select((element, index) => index).ToList();
                 Assert.AreEqual(0, bData7[0]);
+
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
+
+                var bData8 = context.BDbSet.Select(b => 5).ToList();
+                Assert.AreEqual(5, bData8[2]);
             }
         }
 

@@ -38,7 +38,7 @@ namespace GlobalsFramework.Linq.QueryProcessing
                 return NormalizeResult(result, query);
 
             var multipleResult = ExpressionProcessingHelper.CopyInstances(result, nodeReferences.Count,
-                () => ExpressionProcessingHelper.ProcessExpression(memberExpression, nodeReferences));
+                () => ExpressionProcessingHelper.ProcessExpression(memberExpression, nodeReferences).Result);
 
             return new ProcessingResult(true, NormalizeResult(multipleResult, query).Result);
         }
