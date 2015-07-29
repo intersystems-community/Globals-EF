@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using GlobalsFramework.Linq.ExpressionProcessing;
 using GlobalsFramework.Linq.Helpers;
-using InterSystems.Globals;
 
 namespace GlobalsFramework.Linq.QueryProcessing
 {
@@ -27,37 +23,22 @@ namespace GlobalsFramework.Linq.QueryProcessing
                 return ProcessingResult.Unsuccessful;
 
             var memberExpression = lambdaExpression.Body;
-            var nodeReferences = (List<NodeReference>) parentResult.Result;
+            var nodeReferences = parentResult.GetDeferredList();
 
             var result = ExpressionProcessingHelper.ProcessExpression(memberExpression, nodeReferences);
 
             if (!result.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
+            var targetItemType = QueryProcessingHelper.GetReturnParameterType(query);
+
             if (!result.IsSingleItem)
-                return NormalizeResult(result, query);
+                return QueryProcessingHelper.NormalizeMultipleResult(result, targetItemType);
 
             var multipleResult = ExpressionProcessingHelper.CopyInstances(result, nodeReferences.Count,
                 () => ExpressionProcessingHelper.ProcessExpression(memberExpression, nodeReferences).Result);
 
-            return new ProcessingResult(true, NormalizeResult(multipleResult, query).Result);
-        }
-
-        private static ProcessingResult NormalizeResult(ProcessingResult result, MethodCallExpression query)
-        {
-            if (result.IsDeferred())
-                return result;
-
-            var sourceItems = result.GetItems();
-            var resultList = (IList) Activator.CreateInstance(
-                typeof (List<>).MakeGenericType(QueryProcessingHelper.GetReturnParameterType(query)));
-
-            foreach (var sourceItem in sourceItems)
-            {
-                resultList.Add(sourceItem);
-            }
-
-            return new ProcessingResult(true, resultList);
+            return new ProcessingResult(true, QueryProcessingHelper.NormalizeMultipleResult(multipleResult, targetItemType).Result);
         }
     }
 }

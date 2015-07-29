@@ -40,8 +40,10 @@ namespace GlobalsFrameworkTest.Data
         [Column(IsPrimaryKey = true, IsDbGenerated = true)]
         public int Id { get; set; }
 
+        [Column]
         public int Id2 { get; set; }
 
+        [Column]
         public byte Id3 { get; set; }
 
         [Column(Name = "L")]
@@ -162,7 +164,7 @@ namespace GlobalsFrameworkTest.Data
         public int Id;
     }
 
-    public class TestB : IEquatable<TestB>
+    public class TestB : IEquatable<TestB>, IComparable<TestB>
     {
         [Column(Name = "Key", IsPrimaryKey = true, IsDbGenerated = true)]
         public int? Id { get; set; }
@@ -201,6 +203,11 @@ namespace GlobalsFrameworkTest.Data
         public bool Equals(TestB other)
         {
             return true;
+        }
+
+        public int CompareTo(TestB other)
+        {
+            return 0;
         }
     }
 
@@ -309,6 +316,17 @@ namespace GlobalsFrameworkTest.Data
         public int GetHashCode(TestC obj)
         {
             return 0;
+        }
+    }
+
+    public class TestIntComparer : IComparer<int>
+    {
+        public int Compare(int x, int y)
+        {
+            if (x == y)
+                return 0;
+
+            return (x - y)*-1;
         }
     }
 

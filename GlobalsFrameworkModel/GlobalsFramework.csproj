@@ -66,6 +66,11 @@
     <Compile Include="Exceptions\EntityValidationException.cs" />
     <Compile Include="Exceptions\GlobalsDbException.cs" />
     <Compile Include="Extensions\NodeReferenceExtensions.cs" />
+    <Compile Include="Linq\DeferredOrdering\IIndexedComparer.cs" />
+    <Compile Include="Linq\DeferredOrdering\IDeferredOrderedEnumerable.cs" />
+    <Compile Include="Linq\DeferredOrdering\OrderedEnumerable`2.cs" />
+    <Compile Include="Linq\DeferredOrdering\IndexedComparer.cs" />
+    <Compile Include="Linq\DeferredOrdering\OrderedEnumerable`1.cs" />
     <Compile Include="Linq\EntityQuery.cs" />
     <Compile Include="Linq\ExpressionCaching\CompiledExpressionStorage.cs" />
     <Compile Include="Linq\ExpressionCaching\ExpressionHashCodeCalculator.cs" />
@@ -103,6 +108,7 @@
     <Compile Include="Linq\QueryProcessing\FirstQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\IQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\LastQueryProcessor.cs" />
+    <Compile Include="Linq\QueryProcessing\OrderByQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\SelectQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\SingleQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\WhereQueryProcessor.cs" />

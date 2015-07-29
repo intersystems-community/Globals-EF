@@ -97,8 +97,8 @@ namespace GlobalsFrameworkTest.Tests
                 context.ADbSet.InsertOnSubmit(_testEntity);
                 context.SubmitChanges();
 
-                var bData8 = context.BDbSet.Select(b => 5).ToList();
-                Assert.AreEqual(5, bData8[2]);
+                var bData8 = context.ADbSet.Select(b => 5).ToList();
+                Assert.AreEqual(5, bData8[1]);
             }
         }
 
@@ -368,7 +368,7 @@ namespace GlobalsFrameworkTest.Tests
         }
 
         [Test]
-        public void All()
+        public void TestAll()
         {
             using (var context = new TestDataContext())
             {
@@ -392,7 +392,7 @@ namespace GlobalsFrameworkTest.Tests
         }
 
         [Test]
-        public void Average()
+        public void TestAverage()
         {
             using (var context = new TestDataContext())
             {
@@ -440,7 +440,7 @@ namespace GlobalsFrameworkTest.Tests
         }
 
         [Test]
-        public void ConvertQueries()
+        public void TestConvertQueries()
         {
             using (var context = new TestDataContext())
             {
@@ -470,7 +470,7 @@ namespace GlobalsFrameworkTest.Tests
         }
 
         [Test]
-        public void Concat()
+        public void TestConcat()
         {
             using (var context = new TestDataContext())
             {
@@ -494,7 +494,7 @@ namespace GlobalsFrameworkTest.Tests
         }
 
         [Test]
-        public void Contains()
+        public void TestContains()
         {
             using (var context = new TestDataContext())
             {
@@ -516,7 +516,7 @@ namespace GlobalsFrameworkTest.Tests
         }
 
         [Test]
-        public void DefaultIfEmpty()
+        public void TestDefaultIfEmpty()
         {
             using (var context = new TestDataContext())
             {
@@ -543,6 +543,118 @@ namespace GlobalsFrameworkTest.Tests
 
                 var result7 = context.ADbSet.Select(a=>a.C.Value).DefaultIfEmpty().First();
                 Assert.AreEqual(0, result7.Id);
+            }
+        }
+
+        [Test]
+        public void TestOrderBy()
+        {
+            using (var context = new TestDataContext())
+            {
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
+
+                var ids = context.ADbSet.Select(a => a.Id).ToList();
+
+                var result1 = context.ADbSet.OrderBy(a => a.Id).Select(a => a.Id).ToList();
+                Assert.IsTrue(result1.SequenceEqual(ids));
+
+                var result2 = context.ADbSet.OrderByDescending(a => a.Id).Select(a => a.Id).ToList();
+                Assert.IsTrue(result2.SequenceEqual(ids.OrderByDescending(i => i)));
+
+                var result3 = context.ADbSet.OrderBy(a => 5).Select(a => a.Id).ToList();
+                Assert.IsTrue(result3.SequenceEqual(ids));
+
+                var result4 = context.ADbSet.Join(new List<int> {ids[0], ids[1]}, a => a.Id, b => b, (a, b) => a)
+                    .OrderBy(a => 5)
+                    .Select(a => a.Id)
+                    .ToList();
+
+                Assert.IsTrue(result4.SequenceEqual(ids));
+
+                var result5 = context.ADbSet.Join(new List<int> { ids[0], ids[1] }, a => a.Id, b => b, (a, b) => a)
+                    .OrderByDescending(a => a.Id)
+                    .Select(a => a.Id)
+                    .ToList();
+
+                Assert.IsTrue(result5.SequenceEqual(ids.OrderByDescending(i => i)));
+
+                var result6 = context.ADbSet.OrderBy(a => a.Id).OrderByDescending(a=>a.Id).Select(a => a.Id).ToList();
+                Assert.IsTrue(result6.SequenceEqual(ids.OrderByDescending(i => i)));
+
+                var result7 = context.ADbSet.OrderBy(a => a.Id, new TestIntComparer()).Select(a => a.Id).ToList();
+                Assert.IsTrue(result7.SequenceEqual(ids.OrderByDescending(i => i)));
+
+                var result8 = context.ADbSet.OrderBy(a => a.TestBProperty).Select(a => a.Id).ToList();
+                Assert.IsTrue(result8.SequenceEqual(ids));
+
+                Assert.Throws<InvalidOperationException>(() => result8 = context.ADbSet.OrderBy(a => a).Select(a => a.Id).ToList());
+            }
+        }
+
+        [Test]
+        public void TestThenBy()
+        {
+            using (var context = new TestDataContext())
+            {
+                context.ADbSet.DeleteAllOnSubmit(context.ADbSet);
+                context.SubmitChanges();
+
+                context.ADbSet.InsertOnSubmit(new TestA(0) {Id2 = 0, Id3 = 1, L1 = new List<int>()});
+                context.ADbSet.InsertOnSubmit(new TestA(0) {Id2 = 0, Id3 = 1, L1 = new List<int>()});
+                context.ADbSet.InsertOnSubmit(new TestA(0) {Id2 = 1, Id3 = 2, L1 = new List<int>()});
+
+                context.SubmitChanges();
+
+                var ids = context.ADbSet.Select(a => a.Id).ToList();
+
+                var result1 = context.ADbSet.OrderBy(a => a.Id2).ThenByDescending(a=>a.Id3).Select(a => a.Id).ToList();
+                Assert.IsTrue(result1.SequenceEqual(ids));
+
+                var result2 = context.ADbSet.OrderBy(a => a.Id2).ThenBy(a => a.Id3).ThenByDescending(a=>a.Id).Select(a => a.Id).ToList();
+                Assert.IsTrue(result2.SequenceEqual(new List<int> { ids[1], ids[0], ids[2] }));
+
+                var result3 = context.ADbSet.OrderBy(a => a.Id2).ThenByDescending(a => a.Id, new TestIntComparer()).Select(a => a.Id).ToList();
+                Assert.IsTrue(result3.SequenceEqual(ids));
+
+                var result4 = context.ADbSet.OrderBy(a => a.Id2).ThenByDescending(a => 5).Select(a => a.Id).ToList();
+                Assert.IsTrue(result4.SequenceEqual(ids));
+
+                //order by result is not deferred
+                var result5 = context.ADbSet
+                    .Select((a,index) => a)
+                    .OrderBy(a => a.Id)
+                    .ThenBy(a => a.Id2)
+                    .ThenByDescending(a => a.Id)
+                    .Select(a => a.Id)
+                    .ToList();
+                Assert.IsTrue(result5.SequenceEqual(ids));
+
+                //default processing of then by, order by is not deferred
+                var result6 = context.ADbSet
+                    .OrderBy(a => a.L1.FirstOrDefault(i => i == a.Id))
+                    .ThenBy(a => a.L1.FirstOrDefault(i => i == a.Id))
+                    .Select(a => a.Id)
+                    .ToList();
+                Assert.IsTrue(result6.SequenceEqual(ids));
+
+                //default processing of then by, order by is deferred
+                var result7 = context.ADbSet
+                    .OrderBy(a => a.Id2)
+                    .ThenByDescending(a=>a.Id)
+                    .ThenBy(a => a.L1.FirstOrDefault(i => i == a.Id))
+                    .Select(a => a.Id)
+                    .ToList();
+                Assert.IsTrue(result7.SequenceEqual(new List<int> {ids[1], ids[0], ids[2]}));
+
+                //order by result is processed by default
+                var result8 = context.ADbSet
+                    .OrderBy(a => a.L1.FirstOrDefault(i => i == a.Id))
+                    .ThenBy(a => a.Id2)
+                    .ThenByDescending(a => a.Id)
+                    .Select(a => a.Id)
+                    .ToList();
+                Assert.IsTrue(result8.SequenceEqual(new List<int> { ids[1], ids[0], ids[2] }));
             }
         }
 

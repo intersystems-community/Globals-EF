@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using GlobalsFramework.Access;
 using InterSystems.Globals;
 
@@ -38,6 +39,11 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
         internal IEnumerable<NodeReference> GetDeferredItems()
         {
             return Result as IEnumerable<NodeReference>;
+        }
+        internal List<NodeReference> GetDeferredList()
+        {
+            var list = Result as List<NodeReference>;
+            return list ?? ((IEnumerable<NodeReference>) Result).ToList();
         }
         internal NodeReference GetDeferredItem()
         {

@@ -30,7 +30,8 @@ namespace GlobalsFramework.Linq.Helpers
                 new AverageQueryProcessor(),
                 new ConcatQueryProcessor(),
                 new ContainsQueryProcessor(),
-                new DefaultIfEmptyProcessor()
+                new DefaultIfEmptyProcessor(),
+                new OrderByQueryProcessor()
             };
         }
 
@@ -92,6 +93,28 @@ namespace GlobalsFramework.Linq.Helpers
                 : ProcessingResult.Unsuccessful;
         }
 
+        internal static ProcessingResult NormalizeMultipleResult(ProcessingResult result, Type targetItemType)
+        {
+            if (result.IsDeferred())
+                return result;
+
+            var sourceItems = result.GetItems();
+            var resultList = (IList) Activator.CreateInstance(typeof (List<>).MakeGenericType(targetItemType));
+
+            foreach (var sourceItem in sourceItems)
+            {
+                resultList.Add(sourceItem);
+            }
+
+            return new ProcessingResult(true, resultList);
+        }
+
+        internal static ProcessingResult ProcessQueryByDefault(MethodCallExpression query, ProcessingResult parentResult)
+        {
+            var result = InvokeQuery(query, parentResult.GetLoadedItems(GetSourceParameterType(query)));
+            return new ProcessingResult(true, result);
+        }
+
         private static ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
         {
             foreach (var queryProcessor in QueryProcessors)
@@ -107,12 +130,6 @@ namespace GlobalsFramework.Linq.Helpers
             }
 
             return ProcessQueryByDefault(query, parentResult);
-        }
-
-        private static ProcessingResult ProcessQueryByDefault(MethodCallExpression query, ProcessingResult parentResult)
-        {
-            var result = InvokeQuery(query, parentResult.GetLoadedItems(GetSourceParameterType(query)));
-            return new ProcessingResult(true, result);
         }
 
         private static object InvokeQuery(MethodCallExpression query, object sourse)

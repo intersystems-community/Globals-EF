@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using GlobalsFramework.Linq.ExpressionProcessing;
 using GlobalsFramework.Linq.Helpers;
-using InterSystems.Globals;
 
 namespace GlobalsFramework.Linq.QueryProcessing
 {
@@ -32,7 +30,7 @@ namespace GlobalsFramework.Linq.QueryProcessing
             var unaryExpression = (UnaryExpression) query.Arguments[1];
             var selectorLambda = (LambdaExpression)unaryExpression.Operand;
 
-            var selectorResult = ExpressionProcessingHelper.ProcessExpression(selectorLambda.Body, (List<NodeReference>) parentResult.Result);
+            var selectorResult = ExpressionProcessingHelper.ProcessExpression(selectorLambda.Body, parentResult.GetDeferredList());
 
             if (!selectorResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
