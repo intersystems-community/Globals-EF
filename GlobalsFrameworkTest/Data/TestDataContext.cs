@@ -209,6 +209,11 @@ namespace GlobalsFrameworkTest.Data
         {
             return 0;
         }
+
+        public override int GetHashCode()
+        {
+            return 0;
+        }
     }
 
     public struct TestC

@@ -31,7 +31,8 @@ namespace GlobalsFramework.Linq.Helpers
                 new ConcatQueryProcessor(),
                 new ContainsQueryProcessor(),
                 new DefaultIfEmptyProcessor(),
-                new OrderByQueryProcessor()
+                new OrderByQueryProcessor(),
+                new DistinctQueryProcessor()
             };
         }
 

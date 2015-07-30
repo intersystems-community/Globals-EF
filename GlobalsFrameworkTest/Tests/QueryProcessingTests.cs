@@ -659,6 +659,28 @@ namespace GlobalsFrameworkTest.Tests
         }
 
         [Test]
+        public void TestDistinct()
+        {
+            using (var context = new TestDataContext())
+            {
+                context.ADbSet.InsertOnSubmit(new TestA(0) { TestBProperty = _testEntity.TestBProperty, C = new TestC {Id = 9}});
+                context.SubmitChanges();
+
+                var result1 = context.ADbSet.Distinct().Count();
+                Assert.AreEqual(2, result1);
+
+                var result2 = context.ADbSet.Select(a=>a.TestBProperty).Distinct().Count();
+                Assert.AreEqual(1, result2);
+
+                var result3 = context.ADbSet.Select(a => a.C.Value).Distinct(new TestComparer()).Count();
+                Assert.AreEqual(1, result3);
+
+                var result4 = context.ADbSet.Select(a => a.C.Value).Distinct().Count();
+                Assert.AreEqual(2, result4);
+            }
+        }
+
+        [Test]
         public void TestTake()
         {
             using (var context = new TestDataContext())

@@ -104,6 +104,7 @@
     <Compile Include="Linq\QueryProcessing\ContainsQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\CountQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\DefaultIfEmptyProcessor.cs" />
+    <Compile Include="Linq\QueryProcessing\DistinctQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\ElementAtQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\FirstQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\IQueryProcessor.cs" />

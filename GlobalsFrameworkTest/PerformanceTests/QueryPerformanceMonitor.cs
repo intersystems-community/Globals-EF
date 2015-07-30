@@ -126,5 +126,11 @@ namespace GlobalsFrameworkTest.PerformanceTests
         {
             var res = context.ADbSet.OrderBy(a => 3).ThenBy(a => a.Id).Select(a => a.Id).ToList();
         }
+
+        [PerfWatch]
+        private void Distinct(TestDataContext context)
+        {
+            var res = context.ADbSet.Select(a => a.Id).Distinct().ToList();
+        }
     }
 }
