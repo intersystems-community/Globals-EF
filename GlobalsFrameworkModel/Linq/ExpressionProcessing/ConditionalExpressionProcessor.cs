@@ -38,7 +38,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             {
                 var resultExpression = (bool) resultValue ? conditionalExpression.IfTrue : conditionalExpression.IfFalse;
 
-                var processingResult = ExpressionProcessingHelper.ProcessExpression(resultExpression, new List<NodeReference> {references[index]});
+                var processingResult = ExpressionProcessingHelper.ProcessExpression(resultExpression, new List<NodeReference>(1) {references[index]});
                 if (!processingResult.IsSuccess)
                     return ProcessingResult.Unsuccessful;
 

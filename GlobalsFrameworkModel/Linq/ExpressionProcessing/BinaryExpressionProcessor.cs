@@ -294,7 +294,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
                 return new ProcessingResult(true, true, true);
 
             var rightResult = ExpressionProcessingHelper.ProcessExpression(rightExpression,
-                new List<NodeReference> {reference});
+                new List<NodeReference>(1) {reference});
             if (!rightResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
