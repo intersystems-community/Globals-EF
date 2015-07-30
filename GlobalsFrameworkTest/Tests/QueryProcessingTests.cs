@@ -757,6 +757,151 @@ namespace GlobalsFrameworkTest.Tests
         }
 
         [Test]
+        public void TestMax()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.Max(a => a);
+                Assert.AreEqual(0, result1);
+
+                var firstElement = context.ADbSet.Select(a => a).First();
+                var result2 = context.ADbSet.Max(a => a.Id);
+                Assert.AreEqual(firstElement.Id, result2);
+
+                var result3 = context.ADbSet.Max(a => a.TestBProperty.Id);
+                Assert.AreEqual(firstElement.TestBProperty.Id, result3);
+
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
+
+                var result4 = context.ADbSet.Max(a => a.Id);
+                var max = firstElement.Id + 1;
+                Assert.AreEqual(max, result4);
+
+                var result5 = context.ADbSet.Max(a => new TestA(0));
+                Assert.AreEqual(0, result5);
+
+                var result6 = context.ADbSet.Max(a => 4);
+                Assert.AreEqual(4, result6);
+
+                var result7 = context.ADbSet.Select(a => a.TestBProperty.Id).Max();
+                var max2 = firstElement.TestBProperty.Id + 1;
+                Assert.AreEqual(max2, result7);
+
+                var result8 = context.ADbSet.Select(a => a.Id).Max();
+                Assert.AreEqual(max, result8);
+
+                var result9 = context.ADbSet.Select(a => a.Id).OrderBy(id => id).Max();
+                Assert.AreEqual(max, result9);
+
+                var result10 = context.ADbSet.OrderBy(a => a.Id).Max(a => a.TestBProperty.Id);
+                Assert.AreEqual(max2, result10);
+
+                context.ADbSet.DeleteAllOnSubmit(context.ADbSet);
+                context.SubmitChanges();
+
+                Assert.Throws<InvalidOperationException>(() => result2 = context.ADbSet.Max(a => a.Id));
+            }
+        }
+
+        [Test]
+        public void TestMin()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.Min(a => a);
+                Assert.AreEqual(0, result1);
+
+                var firstElement = context.ADbSet.Select(a => a).First();
+                var result2 = context.ADbSet.Min(a => a.Id);
+                Assert.AreEqual(firstElement.Id, result2);
+
+                var result3 = context.ADbSet.Min(a => a.TestBProperty.Id);
+                Assert.AreEqual(firstElement.TestBProperty.Id, result3);
+
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
+
+                var result4 = context.ADbSet.Min(a => a.Id);
+                var min = firstElement.Id;
+                Assert.AreEqual(min, result4);
+
+                var result5 = context.ADbSet.Min(a => new TestA(0));
+                Assert.AreEqual(0, result5);
+
+                var result6 = context.ADbSet.Min(a => 4);
+                Assert.AreEqual(4, result6);
+
+                var result7 = context.ADbSet.Select(a => a.TestBProperty.Id).Min();
+                var min2 = firstElement.TestBProperty.Id;
+                Assert.AreEqual(min2, result7);
+
+                var result8 = context.ADbSet.Select(a => a.Id).Min();
+                Assert.AreEqual(min, result8);
+
+                var result9 = context.ADbSet.Select(a => a.Id).OrderBy(id => id).Min();
+                Assert.AreEqual(min, result9);
+
+                var result10 = context.ADbSet.OrderBy(a => a.Id).Min(a => a.TestBProperty.Id);
+                Assert.AreEqual(min2, result10);
+
+                context.ADbSet.DeleteAllOnSubmit(context.ADbSet);
+                context.SubmitChanges();
+
+                Assert.Throws<InvalidOperationException>(() => result2 = context.ADbSet.Min(a => a.Id));
+            }
+        }
+
+        [Test]
+        public void TestSum()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.Sum(a => a);
+                Assert.AreEqual(0, result1);
+
+                var firstElement = context.ADbSet.Select(a => a).First();
+                var result2 = context.ADbSet.Sum(a => a.Id);
+                Assert.AreEqual(firstElement.Id, result2);
+
+                var result3 = context.ADbSet.Sum(a => a.TestBProperty.Id);
+                Assert.AreEqual(firstElement.TestBProperty.Id, result3);
+
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
+
+                var result4 = context.ADbSet.Sum(a => a.Id);
+                var sum = (firstElement.Id*2) + 1;
+                Assert.AreEqual(sum, result4);
+
+                var result5 = context.ADbSet.Sum(a => new TestA(0));
+                Assert.AreEqual(0, result5);
+
+                var result6 = context.ADbSet.Sum(a => 4);
+                Assert.AreEqual(4, result6);
+
+                var result7 = context.ADbSet.Select(a => a.TestBProperty.Id).Sum();
+                var sum2 = (firstElement.TestBProperty.Id*2) + 1;
+                Assert.AreEqual(sum2, result7);
+
+                var result8 = context.ADbSet.Select(a => a.Id).Sum();
+                Assert.AreEqual(sum, result8);
+
+                var result9 = context.ADbSet.Select(a => a.Id).OrderBy(id => id).Sum();
+                Assert.AreEqual(sum, result9);
+
+                var result10 = context.ADbSet.OrderBy(a => a.Id).Sum(a => a.TestBProperty.Id);
+                Assert.AreEqual(sum2, result10);
+
+                context.ADbSet.DeleteAllOnSubmit(context.ADbSet);
+                context.SubmitChanges();
+
+                var result11 = context.ADbSet.Sum(a => a.Id);
+                Assert.AreEqual(0, result11);
+            }
+        }
+
+        [Test]
         public void TestTake()
         {
             using (var context = new TestDataContext())

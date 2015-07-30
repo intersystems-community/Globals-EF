@@ -156,5 +156,23 @@ namespace GlobalsFrameworkTest.PerformanceTests
         {
             var res = context.ADbSet.Select(a => a.Id).Union(new List<int> {-3}).ToList();
         }
+
+        [PerfWatch]
+        private void MaxQuery(TestDataContext context)
+        {
+            var res = context.ADbSet.Max(a => a.Id);
+        }
+
+        [PerfWatch]
+        private void MinQuery(TestDataContext context)
+        {
+            var res = context.ADbSet.Min(a => a.Id);
+        }
+
+        [PerfWatch]
+        private void SumQuery(TestDataContext context)
+        {
+            var res = context.ADbSet.Sum(a => a.Id);
+        }
     }
 }
