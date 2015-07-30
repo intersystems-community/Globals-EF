@@ -111,6 +111,7 @@
     <Compile Include="Linq\QueryProcessing\LastQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\OrderByQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\SelectQueryProcessor.cs" />
+    <Compile Include="Linq\QueryProcessing\SequencesComparisonQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\SingleQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\WhereQueryProcessor.cs" />
     <Compile Include="Utils\ConnectionManagement\ConnectionParameters.cs" />

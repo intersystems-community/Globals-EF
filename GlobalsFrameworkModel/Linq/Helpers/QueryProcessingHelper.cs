@@ -32,7 +32,8 @@ namespace GlobalsFramework.Linq.Helpers
                 new ContainsQueryProcessor(),
                 new DefaultIfEmptyProcessor(),
                 new OrderByQueryProcessor(),
-                new DistinctQueryProcessor()
+                new DistinctQueryProcessor(),
+                new SequencesComparisonQueryProcessor()
             };
         }
 

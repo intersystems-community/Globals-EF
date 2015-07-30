@@ -132,5 +132,29 @@ namespace GlobalsFrameworkTest.PerformanceTests
         {
             var res = context.ADbSet.Select(a => a.Id).Distinct().ToList();
         }
+
+        [PerfWatch]
+        private void Except(TestDataContext context)
+        {
+            var res = context.ADbSet.Select(a => a.Id).Except(new List<int> {-3}).ToList();
+        }
+
+        [PerfWatch]
+        private void Intersect(TestDataContext context)
+        {
+            var res = context.ADbSet.Select(a => a.Id).Intersect(new List<int> {-3}).ToList();
+        }
+
+        [PerfWatch]
+        private void SequenceEqual(TestDataContext context)
+        {
+            var res = context.ADbSet.Select(a => a.Id).SequenceEqual(new List<int> {-3});
+        }
+
+        [PerfWatch]
+        private void Union(TestDataContext context)
+        {
+            var res = context.ADbSet.Select(a => a.Id).Union(new List<int> {-3}).ToList();
+        }
     }
 }

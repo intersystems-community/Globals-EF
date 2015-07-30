@@ -681,6 +681,82 @@ namespace GlobalsFrameworkTest.Tests
         }
 
         [Test]
+        public void TestExcept()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.Except(new List<TestA> {new TestA(0)}).Count();
+                Assert.AreEqual(1, result1);
+
+                var result2 = context.ADbSet.Select(a => a.TestBProperty).Except(new List<TestB> {new TestB(0)}).Count();
+                Assert.AreEqual(0, result2);
+
+                var result3 = context.ADbSet.Select(a => a.C.Value).Except(context.ADbSet.Select(a => new TestC())).Count();
+                Assert.AreEqual(1, result3);
+
+                var result4 = context.ADbSet.Select(a => a.C.Value).Except(new List<TestC> { new TestC()}, new TestComparer()).Count();
+                Assert.AreEqual(0, result4);
+            }
+        }
+
+        [Test]
+        public void TestIntersect()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.Intersect(new List<TestA> {new TestA(0)}).Count();
+                Assert.AreEqual(0, result1);
+
+                var result2 = context.ADbSet.Select(a => a.TestBProperty).Intersect(new List<TestB> {new TestB(0)}).Count();
+                Assert.AreEqual(1, result2);
+
+                var result3 = context.ADbSet.Select(a => a.C.Value).Intersect(context.ADbSet.Select(a => new TestC())).Count();
+                Assert.AreEqual(0, result3);
+
+                var result4 = context.ADbSet.Select(a => a.C.Value).Intersect(new List<TestC> {new TestC()}, new TestComparer()).Count();
+                Assert.AreEqual(1, result4);
+            }
+        }
+
+        [Test]
+        public void TestUnion()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.Union(new List<TestA> {new TestA(0)}).Count();
+                Assert.AreEqual(2, result1);
+
+                var result2 = context.ADbSet.Select(a => a.TestBProperty).Union(new List<TestB> {new TestB(0)}).Count();
+                Assert.AreEqual(1, result2);
+
+                var result3 = context.ADbSet.Select(a => a.C.Value).Union(context.ADbSet.Select(a => new TestC())).Count();
+                Assert.AreEqual(2, result3);
+
+                var result4 = context.ADbSet.Select(a => a.C.Value).Union(new List<TestC> {new TestC()}, new TestComparer()).Count();
+                Assert.AreEqual(1, result4);
+            }
+        }
+
+        [Test]
+        public void TestSequenceEqual()
+        {
+            using (var context = new TestDataContext())
+            {
+                var result1 = context.ADbSet.SequenceEqual(new List<TestA> { new TestA(0) });
+                Assert.AreEqual(false, result1);
+
+                var result2 = context.ADbSet.Select(a => a.TestBProperty).SequenceEqual(new List<TestB> {new TestB(0)});
+                Assert.AreEqual(true, result2);
+
+                var result3 = context.ADbSet.Select(a => a.C.Value).SequenceEqual(context.ADbSet.Select(a => new TestC()));
+                Assert.AreEqual(false, result3);
+
+                var result4 = context.ADbSet.Select(a => a.C.Value).SequenceEqual(new List<TestC> {new TestC()}, new TestComparer());
+                Assert.AreEqual(true, result4);
+            }
+        }
+
+        [Test]
         public void TestTake()
         {
             using (var context = new TestDataContext())
