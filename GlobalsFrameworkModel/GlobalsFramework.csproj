@@ -130,6 +130,7 @@
     <Compile Include="Linq\QueryProcessing\SingleResultQueries\SingleOrDefaultQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\SingleResultQueries\SingleQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\SingleResultQueries\SingleResultQueryProcessor.cs" />
+    <Compile Include="Linq\QueryProcessing\SkipQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\WhereQueryProcessor.cs" />
     <Compile Include="Utils\ConnectionManagement\ConnectionParameters.cs" />
     <Compile Include="Utils\InstanceCreation\InstanceCreator.cs" />

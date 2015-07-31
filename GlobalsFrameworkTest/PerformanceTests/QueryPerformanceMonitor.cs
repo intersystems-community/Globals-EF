@@ -16,7 +16,7 @@ namespace GlobalsFrameworkTest.PerformanceTests
         [PerfWatch]
         private void WhereQuery(TestDataContext context)
         {
-            var res = context.ADbSet.Where(a => a.Id >= 0).Select(a => a.Id).Count();
+            var res = context.ADbSet.Where(a => a.Id >= 0).Count();
         }
 
         [PerfWatch]
@@ -112,49 +112,49 @@ namespace GlobalsFrameworkTest.PerformanceTests
         [PerfWatch]
         private void DefaultIfEmpty(TestDataContext context)
         {
-            var res = context.ADbSet.Select(a => a.Id).DefaultIfEmpty().ToList();
+            var res = context.ADbSet.DefaultIfEmpty().Count();
         }
 
         [PerfWatch]
         private void OrderBy(TestDataContext context)
         {
-            var res = context.ADbSet.Select(a => a.Id).OrderBy(i => i).ToList();
+            var res = context.ADbSet.OrderBy(a => a.Id).Count();
         }
 
         [PerfWatch]
         private void OrderByDescending(TestDataContext context)
         {
-            var res = context.ADbSet.Select(a => a.Id).OrderByDescending(i => i).ToList();
+            var res = context.ADbSet.OrderByDescending(a => a.Id).Count();
         }
 
         [PerfWatch]
         private void ThenBy(TestDataContext context)
         {
-            var res = context.ADbSet.Select(a => a.Id).OrderBy(i => 3).ThenBy(i => i).ToList();
+            var res = context.ADbSet.OrderBy(a => 3).ThenBy(a => a.Id).Count();
         }
 
         [PerfWatch]
         private void ThenByDescending(TestDataContext context)
         {
-            var res = context.ADbSet.Select(a => a.Id).OrderBy(i => 3).ThenByDescending(i => i).ToList();
+            var res = context.ADbSet.OrderBy(a => 3).ThenByDescending(a => a.Id).Count();
         }
 
         [PerfWatch]
         private void Distinct(TestDataContext context)
         {
-            var res = context.ADbSet.Select(a => a.Id).Distinct().ToList();
+            var res = context.ADbSet.Select(a => a.Id).Distinct().Count();
         }
 
         [PerfWatch]
         private void Except(TestDataContext context)
         {
-            var res = context.ADbSet.Select(a => a.Id).Except(new List<int> {-3}).ToList();
+            var res = context.ADbSet.Select(a => a.Id).Except(new List<int> {-3}).Count();
         }
 
         [PerfWatch]
         private void Intersect(TestDataContext context)
         {
-            var res = context.ADbSet.Select(a => a.Id).Intersect(new List<int> {-3}).ToList();
+            var res = context.ADbSet.Select(a => a.Id).Intersect(new List<int> {-3}).Count();
         }
 
         [PerfWatch]
@@ -166,7 +166,7 @@ namespace GlobalsFrameworkTest.PerformanceTests
         [PerfWatch]
         private void Union(TestDataContext context)
         {
-            var res = context.ADbSet.Select(a => a.Id).Union(new List<int> {-3}).ToList();
+            var res = context.ADbSet.Select(a => a.Id).Union(new List<int> {-3}).Count();
         }
 
         [PerfWatch]
@@ -185,6 +185,12 @@ namespace GlobalsFrameworkTest.PerformanceTests
         private void SumQuery(TestDataContext context)
         {
             var res = context.ADbSet.Sum(a => a.Id);
+        }
+
+        [PerfWatch]
+        private void SkipQuery(TestDataContext context)
+        {
+            var res = context.ADbSet.Skip(0).Count();
         }
     }
 }

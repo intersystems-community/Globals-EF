@@ -902,23 +902,44 @@ namespace GlobalsFrameworkTest.Tests
         }
 
         [Test]
+        public void TestSkip()
+        {
+            using (var context = new TestDataContext())
+            {
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
+
+                var firstId = context.ADbSet.First().Id;
+
+                var result1 = context.ADbSet.Skip(1).Single();
+                Assert.AreEqual(firstId + 1, result1.Id);
+
+                var result2 = context.ADbSet.Skip(2).Count();
+                Assert.AreEqual(0, result2);
+
+                var result3 = context.ADbSet.Skip(-2).Count();
+                Assert.AreEqual(2, result3);
+
+                var result4 = context.ADbSet.Skip(0).Count();
+                Assert.AreEqual(2, result4);
+
+                var result5 = context.ADbSet.OfType<TestA>().Skip(0).Count();
+                Assert.AreEqual(2, result5);
+
+                context.ADbSet.DeleteAllOnSubmit(context.ADbSet);
+                context.SubmitChanges();
+
+                var result6 = context.ADbSet.Skip(-2).Count();
+                Assert.AreEqual(0, result6);
+            }
+        }
+
+        [Test]
         public void TestTake()
         {
             using (var context = new TestDataContext())
             {
                 var data1 = new List<TestA> { _testEntity }.Concat(context.ADbSet).Take(1).Single();
-                var data2 = context.ADbSet.First();
-
-                Assert.AreEqual(data1.Id, data2.Id);
-            }
-        }
-
-        [Test]
-        public void TestSkip()
-        {
-            using (var context = new TestDataContext())
-            {
-                var data1 = context.ADbSet.Concat(new List<TestA> { _testEntity }).Skip(1).Single();
                 var data2 = context.ADbSet.First();
 
                 Assert.AreEqual(data1.Id, data2.Id);

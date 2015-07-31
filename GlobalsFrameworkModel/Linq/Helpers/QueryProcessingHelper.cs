@@ -31,7 +31,8 @@ namespace GlobalsFramework.Linq.Helpers
                 new ContainsQueryProcessor(),
                 new DefaultIfEmptyProcessor(),
                 new DistinctQueryProcessor(),
-                new AllQueryProcessor()
+                new AllQueryProcessor(),
+                new SkipQueryProcessor()
             };
 
             InitializeMathQueryProcessors(QueryProcessors);
