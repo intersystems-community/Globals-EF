@@ -105,6 +105,7 @@
     <Compile Include="Linq\QueryProcessing\MathQueries\MathQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\ConcatQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\ContainsQueryProcessor.cs" />
+    <Compile Include="Linq\QueryProcessing\ReverseQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\SingleResultQueries\AnyQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\SingleResultQueries\CountQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\DefaultIfEmptyProcessor.cs" />

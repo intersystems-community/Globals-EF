@@ -1035,5 +1035,23 @@ namespace GlobalsFrameworkTest.Tests
                 Assert.AreEqual(0, result6);
             }
         }
+
+        [Test]
+        public void TestReverse()
+        {
+            using (var context = new TestDataContext())
+            {
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
+
+                var firstId = context.ADbSet.First().Id;
+
+                var result1 = context.ADbSet.Reverse().ToList();
+                Assert.AreEqual(firstId + 1, result1.First().Id);
+
+                var result2 = context.ADbSet.OrderByDescending(a => a.Id).Reverse().ToList();
+                Assert.AreEqual(firstId, result2.First().Id);
+            }
+        }
     }
 }

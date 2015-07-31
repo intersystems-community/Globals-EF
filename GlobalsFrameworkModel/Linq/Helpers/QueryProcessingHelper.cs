@@ -210,6 +210,7 @@ namespace GlobalsFramework.Linq.Helpers
             queryProcessors.Add(new DefaultIfEmptyProcessor());
             queryProcessors.Add(new DistinctQueryProcessor());
             queryProcessors.Add(new AllQueryProcessor());
+            queryProcessors.Add(new ReverseQueryProcessor());
 
             queryProcessors.Add(new SkipQueryProcessor());
             queryProcessors.Add(new TakeQueryProcessor());

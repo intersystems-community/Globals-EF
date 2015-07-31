@@ -110,61 +110,61 @@ namespace GlobalsFrameworkTest.PerformanceTests
         }
 
         [PerfWatch]
-        private void DefaultIfEmpty(TestDataContext context)
+        private void DefaultIfEmptyQuery(TestDataContext context)
         {
             var res = context.ADbSet.DefaultIfEmpty().Count();
         }
 
         [PerfWatch]
-        private void OrderBy(TestDataContext context)
+        private void OrderByQuery(TestDataContext context)
         {
             var res = context.ADbSet.OrderBy(a => a.Id).Count();
         }
 
         [PerfWatch]
-        private void OrderByDescending(TestDataContext context)
+        private void OrderByDescendingQuery(TestDataContext context)
         {
             var res = context.ADbSet.OrderByDescending(a => a.Id).Count();
         }
 
         [PerfWatch]
-        private void ThenBy(TestDataContext context)
+        private void ThenByQuery(TestDataContext context)
         {
             var res = context.ADbSet.OrderBy(a => 3).ThenBy(a => a.Id).Count();
         }
 
         [PerfWatch]
-        private void ThenByDescending(TestDataContext context)
+        private void ThenByDescendingQuery(TestDataContext context)
         {
             var res = context.ADbSet.OrderBy(a => 3).ThenByDescending(a => a.Id).Count();
         }
 
         [PerfWatch]
-        private void Distinct(TestDataContext context)
+        private void DistinctQuery(TestDataContext context)
         {
             var res = context.ADbSet.Select(a => a.Id).Distinct().Count();
         }
 
         [PerfWatch]
-        private void Except(TestDataContext context)
+        private void ExceptQuery(TestDataContext context)
         {
             var res = context.ADbSet.Select(a => a.Id).Except(new List<int> {-3}).Count();
         }
 
         [PerfWatch]
-        private void Intersect(TestDataContext context)
+        private void IntersectQuery(TestDataContext context)
         {
             var res = context.ADbSet.Select(a => a.Id).Intersect(new List<int> {-3}).Count();
         }
 
         [PerfWatch]
-        private void SequenceEqual(TestDataContext context)
+        private void SequenceEqualQuery(TestDataContext context)
         {
             var res = context.ADbSet.Select(a => a.Id).SequenceEqual(new List<int> {-3});
         }
 
         [PerfWatch]
-        private void Union(TestDataContext context)
+        private void UnionQuery(TestDataContext context)
         {
             var res = context.ADbSet.Select(a => a.Id).Union(new List<int> {-3}).Count();
         }
@@ -209,6 +209,12 @@ namespace GlobalsFrameworkTest.PerformanceTests
         private void TakeWhileQuery(TestDataContext context)
         {
             var res = context.ADbSet.SkipWhile(a => a.Id >= 0).Count();
+        }
+
+        [PerfWatch]
+        private void ReverseQuery(TestDataContext context)
+        {
+            var res = context.ADbSet.Reverse().Count();
         }
     }
 }
