@@ -118,13 +118,25 @@ namespace GlobalsFrameworkTest.PerformanceTests
         [PerfWatch]
         private void OrderBy(TestDataContext context)
         {
-            var res = context.ADbSet.OrderBy(a => a.Id).Select(a => a.Id).ToList();
+            var res = context.ADbSet.Select(a => a.Id).OrderBy(i => i).ToList();
+        }
+
+        [PerfWatch]
+        private void OrderByDescending(TestDataContext context)
+        {
+            var res = context.ADbSet.Select(a => a.Id).OrderByDescending(i => i).ToList();
         }
 
         [PerfWatch]
         private void ThenBy(TestDataContext context)
         {
-            var res = context.ADbSet.OrderBy(a => 3).ThenBy(a => a.Id).Select(a => a.Id).ToList();
+            var res = context.ADbSet.Select(a => a.Id).OrderBy(i => 3).ThenBy(i => i).ToList();
+        }
+
+        [PerfWatch]
+        private void ThenByDescending(TestDataContext context)
+        {
+            var res = context.ADbSet.Select(a => a.Id).OrderBy(i => 3).ThenByDescending(i => i).ToList();
         }
 
         [PerfWatch]

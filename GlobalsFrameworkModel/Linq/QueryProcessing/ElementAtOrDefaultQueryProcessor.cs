@@ -1,20 +1,20 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using GlobalsFramework.Linq.ExpressionProcessing;
 using GlobalsFramework.Linq.Helpers;
+using GlobalsFramework.Utils.InstanceCreation;
 
 namespace GlobalsFramework.Linq.QueryProcessing
 {
-    internal sealed class ElementAtQueryProcessor : IQueryProcessor
+    internal sealed class ElementAtOrDefaultQueryProcessor : IQueryProcessor
     {
-        public bool CanProcess(MethodCallExpression query)
+        public  bool CanProcess(MethodCallExpression query)
         {
-            return query.Method.Name == "ElementAt";
+            return query.Method.Name == "ElementAtOrDefault";
         }
 
         public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
         {
-            var index = (int) ((ConstantExpression) query.Arguments[1]).Value;
+            var index = (int)((ConstantExpression)query.Arguments[1]).Value;
 
             var enumerator = parentResult.GetItems().GetEnumerator();
             var elementType = QueryProcessingHelper.GetReturnParameterType(query);
@@ -22,7 +22,8 @@ namespace GlobalsFramework.Linq.QueryProcessing
             while (index >= 0)
             {
                 if (!enumerator.MoveNext())
-                    throw new ArgumentOutOfRangeException("index", "Index was out of range. Must be non-negative and less than the size of the collection.");
+                    return new ProcessingResult(true, InstanceCreator.GetDefaultValue(elementType), true);
+
                 index--;
             }
 

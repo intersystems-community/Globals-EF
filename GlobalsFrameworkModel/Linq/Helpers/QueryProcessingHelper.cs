@@ -6,6 +6,10 @@ using System.Linq.Expressions;
 using GlobalsFramework.Access;
 using GlobalsFramework.Linq.ExpressionProcessing;
 using GlobalsFramework.Linq.QueryProcessing;
+using GlobalsFramework.Linq.QueryProcessing.MathQueries;
+using GlobalsFramework.Linq.QueryProcessing.OrderingQueries;
+using GlobalsFramework.Linq.QueryProcessing.SequenceComparisonQueries;
+using GlobalsFramework.Linq.QueryProcessing.SingleResultQueries;
 using GlobalsFramework.Utils.TypeDescription;
 using InterSystems.Globals;
 
@@ -21,20 +25,19 @@ namespace GlobalsFramework.Linq.Helpers
             {
                 new SelectQueryProcessor(),
                 new WhereQueryProcessor(),
-                new CountQueryProcessor(),
-                new FirstQueryProcessor(),
                 new ElementAtQueryProcessor(),
-                new SingleQueryProcessor(),
-                new LastQueryProcessor(),
-                new AllQueryProcessor(),
-                new MathQueryProcessor(),
+                new ElementAtOrDefaultQueryProcessor(),
                 new ConcatQueryProcessor(),
                 new ContainsQueryProcessor(),
                 new DefaultIfEmptyProcessor(),
-                new OrderByQueryProcessor(),
                 new DistinctQueryProcessor(),
-                new SequencesComparisonQueryProcessor()
+                new AllQueryProcessor()
             };
+
+            InitializeMathQueryProcessors(QueryProcessors);
+            InitializeOrderingQueryProcessors(QueryProcessors);
+            InitializeSequenceComparisonQueryProcessors(QueryProcessors);
+            InitializeSingleResultQueryProcessors(QueryProcessors);
         }
 
         internal static object ProcessQueries(NodeReference node, DataContext context, Expression queryExpression)
@@ -74,25 +77,6 @@ namespace GlobalsFramework.Linq.Helpers
             var parentType = query.Arguments[0].Type;
 
             return ResolveParameterType(sourceType, parentType);
-        }
-
-        internal static ProcessingResult ProcessSingleResultQuery(MethodCallExpression query, ProcessingResult parentResult,
-            Func<IEnumerator, Type, ProcessingResult> queryResolver)
-        {
-            var hasPredicate = query.Arguments.Count == 2;
-
-            if (!hasPredicate)
-                return queryResolver(parentResult.GetItems().GetEnumerator(), GetReturnParameterType(query));
-
-            if (!parentResult.IsDeferred())
-                return ProcessingResult.Unsuccessful;
-
-            var predicate = query.Arguments[1];
-            var predicateResult = ExpressionProcessingHelper.ProcessPredicate(predicate, parentResult.GetDeferredItems());
-
-            return predicateResult.IsSuccess
-                ? queryResolver(predicateResult.GetItems().GetEnumerator(), GetReturnParameterType(query))
-                : ProcessingResult.Unsuccessful;
         }
 
         internal static ProcessingResult NormalizeMultipleResult(ProcessingResult result, Type targetItemType)
@@ -202,6 +186,41 @@ namespace GlobalsFramework.Linq.Helpers
                 return genericArguments.Single();
 
             return type;
+        }
+
+        private static void InitializeMathQueryProcessors(ICollection<IQueryProcessor> queryProcessors)
+        {
+            queryProcessors.Add(new AverageQueryProcessor());
+            queryProcessors.Add(new MaxQueryProcessor());
+            queryProcessors.Add(new MinQueryProcessor());
+            queryProcessors.Add(new SumQueryProcessor());
+        }
+
+        private static void InitializeSequenceComparisonQueryProcessors(ICollection<IQueryProcessor> queryProcessors)
+        {
+            queryProcessors.Add(new ExceptQueryProcessor());
+            queryProcessors.Add(new IntersectQueryProcessor());
+            queryProcessors.Add(new SequenceEqualQueryProcessor());
+            queryProcessors.Add(new UnionQueryProcessor());
+        }
+
+        private static void InitializeOrderingQueryProcessors(ICollection<IQueryProcessor> queryProcessors)
+        {
+            queryProcessors.Add(new OrderByQueryProcessor());
+            queryProcessors.Add(new ThenByQueryProcessor());
+        }
+
+        private static void InitializeSingleResultQueryProcessors(ICollection<IQueryProcessor> queryProcessors)
+        {
+            queryProcessors.Add(new AnyQueryProcessor());
+            queryProcessors.Add(new CountQueryProcessor());
+            queryProcessors.Add(new LongCountQueryProcessor());
+            queryProcessors.Add(new FirstOrDefaultQueryProcessor());
+            queryProcessors.Add(new FirstQueryProcessor());
+            queryProcessors.Add(new LastOrDefaultQueryProcessor());
+            queryProcessors.Add(new LastQueryProcessor());
+            queryProcessors.Add(new SingleOrDefaultQueryProcessor());
+            queryProcessors.Add(new SingleQueryProcessor());
         }
     }
 }
