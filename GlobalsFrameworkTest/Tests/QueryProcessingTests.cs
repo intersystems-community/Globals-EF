@@ -972,10 +972,34 @@ namespace GlobalsFrameworkTest.Tests
         {
             using (var context = new TestDataContext())
             {
-                var data1 = new List<TestA> { _testEntity }.Concat(context.ADbSet).Take(1).Single();
-                var data2 = context.ADbSet.First();
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
 
-                Assert.AreEqual(data1.Id, data2.Id);
+                var firstId = context.ADbSet.First().Id;
+
+                var result1 = context.ADbSet.Take(1).Single();
+                Assert.AreEqual(firstId , result1.Id);
+
+                var result2 = context.ADbSet.Take(2).Last();
+                Assert.AreEqual(firstId + 1, result2.Id);
+
+                var result3 = context.ADbSet.Take(-2).Count();
+                Assert.AreEqual(0, result3);
+
+                var result4 = context.ADbSet.Take(0).Count();
+                Assert.AreEqual(0, result4);
+
+                var result5 = context.ADbSet.OfType<TestA>().Take(5).Count();
+                Assert.AreEqual(2, result5);
+
+                var result6 = context.ADbSet.Take(6).Count();
+                Assert.AreEqual(2, result6);
+
+                context.ADbSet.DeleteAllOnSubmit(context.ADbSet);
+                context.SubmitChanges();
+
+                var result7 = context.ADbSet.Take(5).Count();
+                Assert.AreEqual(0, result7);
             }
         }
     }
