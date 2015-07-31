@@ -23,9 +23,9 @@ namespace GlobalsFramework.Linq.QueryProcessing
 
             var method = GetType().GetMethod("Distinct", BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(elementType);
 
-            var result = method.Invoke(null, new[] { items, comparer });
+            var result = method.Invoke(null, new[] {items, comparer});
 
-            return new ProcessingResult(true, result, true);
+            return new ProcessingResult(true, result);
         }
 
         //ReSharper disable once UnusedMember.Local
