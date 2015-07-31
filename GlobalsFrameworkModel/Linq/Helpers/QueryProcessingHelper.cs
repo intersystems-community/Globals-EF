@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using GlobalsFramework.Access;
 using GlobalsFramework.Linq.ExpressionProcessing;
 using GlobalsFramework.Linq.QueryProcessing;
+using GlobalsFramework.Linq.QueryProcessing.ConditionalLimitQueries;
 using GlobalsFramework.Linq.QueryProcessing.MathQueries;
 using GlobalsFramework.Linq.QueryProcessing.OrderingQueries;
 using GlobalsFramework.Linq.QueryProcessing.SequenceComparisonQueries;
@@ -21,24 +22,8 @@ namespace GlobalsFramework.Linq.Helpers
 
         static QueryProcessingHelper()
         {
-            QueryProcessors = new List<IQueryProcessor>
-            {
-                new SelectQueryProcessor(),
-                new WhereQueryProcessor(),
-                new ElementAtQueryProcessor(),
-                new ElementAtOrDefaultQueryProcessor(),
-                new ConcatQueryProcessor(),
-                new ContainsQueryProcessor(),
-                new DefaultIfEmptyProcessor(),
-                new DistinctQueryProcessor(),
-                new AllQueryProcessor(),
-                new SkipQueryProcessor()
-            };
-
-            InitializeMathQueryProcessors(QueryProcessors);
-            InitializeOrderingQueryProcessors(QueryProcessors);
-            InitializeSequenceComparisonQueryProcessors(QueryProcessors);
-            InitializeSingleResultQueryProcessors(QueryProcessors);
+            QueryProcessors = new List<IQueryProcessor>();
+            InitializeQueryProcessors(QueryProcessors);
         }
 
         internal static object ProcessQueries(NodeReference node, DataContext context, Expression queryExpression)
@@ -189,30 +174,21 @@ namespace GlobalsFramework.Linq.Helpers
             return type;
         }
 
-        private static void InitializeMathQueryProcessors(ICollection<IQueryProcessor> queryProcessors)
+        private static void InitializeQueryProcessors(ICollection<IQueryProcessor> queryProcessors)
         {
             queryProcessors.Add(new AverageQueryProcessor());
             queryProcessors.Add(new MaxQueryProcessor());
             queryProcessors.Add(new MinQueryProcessor());
             queryProcessors.Add(new SumQueryProcessor());
-        }
 
-        private static void InitializeSequenceComparisonQueryProcessors(ICollection<IQueryProcessor> queryProcessors)
-        {
             queryProcessors.Add(new ExceptQueryProcessor());
             queryProcessors.Add(new IntersectQueryProcessor());
             queryProcessors.Add(new SequenceEqualQueryProcessor());
             queryProcessors.Add(new UnionQueryProcessor());
-        }
 
-        private static void InitializeOrderingQueryProcessors(ICollection<IQueryProcessor> queryProcessors)
-        {
             queryProcessors.Add(new OrderByQueryProcessor());
             queryProcessors.Add(new ThenByQueryProcessor());
-        }
 
-        private static void InitializeSingleResultQueryProcessors(ICollection<IQueryProcessor> queryProcessors)
-        {
             queryProcessors.Add(new AnyQueryProcessor());
             queryProcessors.Add(new CountQueryProcessor());
             queryProcessors.Add(new LongCountQueryProcessor());
@@ -222,6 +198,22 @@ namespace GlobalsFramework.Linq.Helpers
             queryProcessors.Add(new LastQueryProcessor());
             queryProcessors.Add(new SingleOrDefaultQueryProcessor());
             queryProcessors.Add(new SingleQueryProcessor());
+
+            queryProcessors.Add(new SelectQueryProcessor());
+            queryProcessors.Add(new WhereQueryProcessor());
+
+            queryProcessors.Add(new ElementAtQueryProcessor());
+            queryProcessors.Add(new ElementAtOrDefaultQueryProcessor());
+
+            queryProcessors.Add(new ConcatQueryProcessor());
+            queryProcessors.Add(new ContainsQueryProcessor());
+            queryProcessors.Add(new DefaultIfEmptyProcessor());
+            queryProcessors.Add(new DistinctQueryProcessor());
+            queryProcessors.Add(new AllQueryProcessor());
+
+            queryProcessors.Add(new SkipQueryProcessor());
+
+            queryProcessors.Add(new SkipWhileQueryProcessor());
         }
     }
 }

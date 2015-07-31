@@ -935,6 +935,39 @@ namespace GlobalsFrameworkTest.Tests
         }
 
         [Test]
+        public void TestSkipWhile()
+        {
+            using (var context = new TestDataContext())
+            {
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
+
+                var firstId = context.ADbSet.First().Id;
+
+                var result1 = context.ADbSet.SkipWhile(a => a.Id <= firstId).Single();
+                Assert.AreEqual(firstId + 1, result1.Id);
+
+                var result2 = context.ADbSet.SkipWhile(a => true).Count();
+                Assert.AreEqual(0, result2);
+
+                var result3 = context.ADbSet.SkipWhile(a => false).Count();
+                Assert.AreEqual(2, result3);
+
+                var result4 = context.ADbSet.OfType<TestA>().SkipWhile(a => false).Count();
+                Assert.AreEqual(2, result4);
+
+                var result5 = context.ADbSet.SkipWhile(a => a.L1.All(i => i == a.Id)).Count();
+                Assert.AreEqual(2, result5);
+
+                context.ADbSet.DeleteAllOnSubmit(context.ADbSet);
+                context.SubmitChanges();
+
+                var result6 = context.ADbSet.SkipWhile(a => false).Count();
+                Assert.AreEqual(0, result6);
+            }
+        }
+
+        [Test]
         public void TestTake()
         {
             using (var context = new TestDataContext())
