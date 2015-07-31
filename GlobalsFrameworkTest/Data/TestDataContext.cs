@@ -26,7 +26,7 @@ namespace GlobalsFrameworkTest.Data
 
         public DbSet<TestA> ADbSet { get; set; }
 
-        public DbSet<TestB> BDbSet;
+        public DbSet<TestB> BDbSet = null;
         public DbSet<TestD> DDbSet { get; set; }
         public DbSet<TestE> EDbSet { get; set; }
         public DbSet<TestF> FDbSet { get; set; }

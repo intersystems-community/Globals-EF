@@ -15,7 +15,7 @@ namespace GlobalsFrameworkTest.Tests.ExpressionProcessing
                 var result1 = context.ADbSet.Where(i => (object)i is TestA).Count();
                 Assert.AreEqual(1, result1);
 
-                var result2 = context.ADbSet.Where(i => (i.TestBProperty.Id.Value is int?) && (i.TestBProperty.Id >= 3)).Count();
+                var result2 = context.ADbSet.Where(i => ((object)i.TestBProperty.Id.Value is int?) && (i.TestBProperty.Id >= 3)).Count();
                 Assert.AreEqual(1, result2);
 
                 object testC = new TestC();
