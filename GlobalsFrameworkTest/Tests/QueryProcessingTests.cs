@@ -1002,5 +1002,38 @@ namespace GlobalsFrameworkTest.Tests
                 Assert.AreEqual(0, result7);
             }
         }
+
+        [Test]
+        public void TestTakeWhile()
+        {
+            using (var context = new TestDataContext())
+            {
+                context.ADbSet.InsertOnSubmit(_testEntity);
+                context.SubmitChanges();
+
+                var firstId = context.ADbSet.First().Id;
+
+                var result1 = context.ADbSet.TakeWhile(a => a.Id <= firstId).Single();
+                Assert.AreEqual(firstId, result1.Id);
+
+                var result2 = context.ADbSet.TakeWhile(a => false).Count();
+                Assert.AreEqual(0, result2);
+
+                var result3 = context.ADbSet.TakeWhile(a => true).Count();
+                Assert.AreEqual(2, result3);
+
+                var result4 = context.ADbSet.OfType<TestA>().TakeWhile(a => false).Count();
+                Assert.AreEqual(0, result4);
+
+                var result5 = context.ADbSet.TakeWhile(a => a.L1.All(i => i == a.Id)).Count();
+                Assert.AreEqual(0, result5);
+
+                context.ADbSet.DeleteAllOnSubmit(context.ADbSet);
+                context.SubmitChanges();
+
+                var result6 = context.ADbSet.TakeWhile(a => true).Count();
+                Assert.AreEqual(0, result6);
+            }
+        }
     }
 }

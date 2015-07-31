@@ -100,6 +100,7 @@
     <Compile Include="Linq\Helpers\ExpressionProcessingHelper.cs" />
     <Compile Include="Linq\QueryProcessing\AllQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\ConditionalLimitQueries\ConditionalLimitQueryProcessor.cs" />
+    <Compile Include="Linq\QueryProcessing\ConditionalLimitQueries\TakeWhileQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\MathQueries\AverageQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\MathQueries\MathQueryProcessor.cs" />
     <Compile Include="Linq\QueryProcessing\ConcatQueryProcessor.cs" />

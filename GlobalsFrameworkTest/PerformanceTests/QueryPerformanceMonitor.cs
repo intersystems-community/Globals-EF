@@ -204,5 +204,11 @@ namespace GlobalsFrameworkTest.PerformanceTests
         {
             var res = context.ADbSet.Take(2).Count();
         }
+
+        [PerfWatch]
+        private void TakeWhileQuery(TestDataContext context)
+        {
+            var res = context.ADbSet.SkipWhile(a => a.Id >= 0).Count();
+        }
     }
 }

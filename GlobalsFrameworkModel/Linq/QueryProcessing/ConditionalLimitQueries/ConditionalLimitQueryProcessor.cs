@@ -35,7 +35,10 @@ namespace GlobalsFramework.Linq.QueryProcessing.ConditionalLimitQueries
                 var predicateValue = ((IList<NodeReference>) predicateResult.Result).Any();
 
                 if (predicateValue)
+                {
+                    ConditionTrueCallback(resultList, enumerator.Current);
                     continue;
+                }
 
                 ConditionFalseCallback(resultList, enumerator.Current);
                 break;
@@ -47,8 +50,8 @@ namespace GlobalsFramework.Linq.QueryProcessing.ConditionalLimitQueries
             return new ProcessingResult(true, resultList);
         }
 
-        protected abstract void ConditionTrueCallback(IList resultItems, object item);
+        protected virtual void ConditionTrueCallback(IList resultItems, object item) { }
 
-        protected abstract void ConditionFalseCallback(IList resultItems, object item);
+        protected virtual void ConditionFalseCallback(IList resultItems, object item) { }
     }
 }

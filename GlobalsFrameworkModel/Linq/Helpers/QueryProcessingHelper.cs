@@ -215,6 +215,7 @@ namespace GlobalsFramework.Linq.Helpers
             queryProcessors.Add(new TakeQueryProcessor());
 
             queryProcessors.Add(new SkipWhileQueryProcessor());
+            queryProcessors.Add(new TakeWhileQueryProcessor());
         }
     }
 }

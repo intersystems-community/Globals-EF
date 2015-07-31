@@ -3,14 +3,14 @@ using System.Linq.Expressions;
 
 namespace GlobalsFramework.Linq.QueryProcessing.ConditionalLimitQueries
 {
-    internal sealed class SkipWhileQueryProcessor : ConditionalLimitQueryProcessor
+    internal sealed class TakeWhileQueryProcessor : ConditionalLimitQueryProcessor
     {
         public override bool CanProcess(MethodCallExpression query)
         {
-            return query.Method.Name == "SkipWhile";
+            return query.Method.Name == "TakeWhile";
         }
 
-        protected override void ConditionFalseCallback(IList resultItems, object item)
+        protected override void ConditionTrueCallback(IList resultItems, object item)
         {
             resultItems.Add(item);
         }
