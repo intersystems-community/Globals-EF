@@ -1,23 +1,12 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Reflection;
+using GlobalsFramework.Utils.RuntimeMethodInvocation;
 
 namespace GlobalsFramework.Utils.TypeConversion
 {
-    internal sealed class TypeConverter
+    internal static class TypeConverter
     {
-        private static readonly TypeConverter ConverterInstance = new TypeConverter();
-
-        private readonly ConcurrentDictionary<int, MethodInfo> _cachedMethods = new ConcurrentDictionary<int, MethodInfo>(); 
-
-        private TypeConverter() { }
-
-        internal static TypeConverter Instance
-        {
-            get { return ConverterInstance; }
-        }
-
-        internal object ConvertChecked(object value, Type targetType)
+        internal static object ConvertChecked(object value, Type targetType)
         {
             if (value == null)
                 return null;
@@ -26,7 +15,8 @@ namespace GlobalsFramework.Utils.TypeConversion
 
             try
             {
-                return InvokeMethod(value, GetOrAddCachedMethod(type, "ConvertChecked"));
+                return RuntimeMethodInvoker.InvokeFuncCached<RuntimeType1, RuntimeType1>(
+                    ConvertChecked<RuntimeType1>, new RuntimeTypeBinding {new RuntimeType1(type)}, value);
             }
             catch (TargetInvocationException e)
             {
@@ -36,70 +26,39 @@ namespace GlobalsFramework.Utils.TypeConversion
             }
         }
 
-        internal object ConvertUnchecked(object value, Type targetType)
+        internal static object ConvertUnchecked(object value, Type targetType)
         {
             if (value == null)
                 return null;
 
             var type = Nullable.GetUnderlyingType(targetType) ?? targetType;
 
-            return InvokeMethod(value, GetOrAddCachedMethod(type, "ConvertUnchecked"));
+            return RuntimeMethodInvoker.InvokeFuncCached<RuntimeType1, RuntimeType1>(
+                    ConvertUnchecked<RuntimeType1>, new RuntimeTypeBinding { new RuntimeType1(type) }, value);
         }
 
-        internal object TypeAsOperation(object value, Type targetType)
+        internal static object TypeAsOperation(object value, Type targetType)
         {
-            return value == null ? null : InvokeMethod(value, GetOrAddCachedMethod(targetType, "TypeAsOperation"));
+            if (value == null)
+                return null;
+
+            return RuntimeMethodInvoker.InvokeFuncCached<RuntimeType1, RuntimeType1>(TypeAsOperation<RuntimeType1>,
+                new RuntimeTypeBinding {new RuntimeType1(targetType)}, value);
         }
 
-        //ReSharper disable once UnusedMember.Local
-        //method is called via reflection
         private static T ConvertUnchecked<T>(dynamic value)
         {
             return unchecked ((T) value);
         }
-        //ReSharper disable once UnusedMember.Local
-        //method is called via reflection
+     
         private static T ConvertChecked<T>(dynamic value)
         {
             return checked((T)value);
         }
 
-        //ReSharper disable once UnusedMember.Local
-        //method is called via reflection
         private static T TypeAsOperation<T>(object obj)
         {
             return obj is T ? (T)obj : default(T);
-        }
-
-        private object InvokeMethod(object value, MethodInfo method)
-        {
-            return method.Invoke(this, new[] {value});
-        }
-
-        private MethodInfo GetOrAddCachedMethod(Type targetType, string methodName)
-        {
-            var hash = GetMethodHashCode(targetType, methodName);
-            MethodInfo convertor;
-
-            if (_cachedMethods.TryGetValue(hash, out convertor)) 
-                return convertor;
-
-            convertor = GetMethodConverter(targetType, methodName);
-            _cachedMethods.TryAdd(hash, convertor);
-
-            return convertor;
-        }
-
-        private MethodInfo GetMethodConverter(Type targeType, string methodName)
-        {
-            return GetType().GetMethod(methodName,
-                BindingFlags.NonPublic | BindingFlags.Static)
-                .MakeGenericMethod(targeType);
-        }
-
-        private int GetMethodHashCode(Type targetType, string methodName)
-        {
-            return string.Format("_m{0}<{1}>", methodName, targetType).GetHashCode();
         }
     }
 }

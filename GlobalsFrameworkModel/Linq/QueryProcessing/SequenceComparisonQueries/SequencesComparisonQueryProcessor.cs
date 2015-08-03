@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Reflection;
 using GlobalsFramework.Linq.ExpressionProcessing;
 using GlobalsFramework.Linq.Helpers;
+using GlobalsFramework.Utils.RuntimeMethodInvocation;
 
 namespace GlobalsFramework.Linq.QueryProcessing.SequenceComparisonQueries
 {
@@ -23,11 +24,11 @@ namespace GlobalsFramework.Linq.QueryProcessing.SequenceComparisonQueries
 
             var sourceType = QueryProcessingHelper.GetSourceParameterType(query);
 
-            var resolver = GetType()
-                .GetMethod("ProcessQuery", BindingFlags.NonPublic | BindingFlags.Instance)
-                .MakeGenericMethod(sourceType);
+            Func<MethodCallExpression, IEnumerable<RuntimeType1>, IEnumerable<RuntimeType1>,
+                IEqualityComparer<RuntimeType1>, ProcessingResult> func = ProcessQuery;
 
-            return (ProcessingResult) resolver.Invoke(this, new[] {query, source1, source2, comparer});
+            return (ProcessingResult) RuntimeMethodInvoker.InvokeFuncCached(
+                func, new RuntimeTypeBinding {new RuntimeType1(sourceType)}, query, source1, source2, comparer);
         }
 
         protected abstract ProcessingResult ProcessQuery<TSource>(MethodCallExpression query, IEnumerable<TSource> first,

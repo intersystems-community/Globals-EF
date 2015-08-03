@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using GlobalsFramework.Linq.ExpressionProcessing;
 using GlobalsFramework.Linq.Helpers;
+using GlobalsFramework.Utils.RuntimeMethodInvocation;
 
 namespace GlobalsFramework.Linq.QueryProcessing
 {
@@ -21,15 +21,12 @@ namespace GlobalsFramework.Linq.QueryProcessing
             var items = parentResult.GetLoadedItems(elementType);
             var comparer = query.Arguments.Count > 1 ? ((ConstantExpression)query.Arguments[1]).Value : null;
 
-            var method = GetType().GetMethod("Distinct", BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(elementType);
-
-            var result = method.Invoke(null, new[] {items, comparer});
+            var result = RuntimeMethodInvoker.InvokeFuncCached<IEnumerable<RuntimeType1>, IEqualityComparer<RuntimeType1>, List<RuntimeType1>>(
+                    Distinct, new RuntimeTypeBinding {new RuntimeType1(elementType)}, items, comparer);
 
             return new ProcessingResult(true, result);
         }
 
-        //ReSharper disable once UnusedMember.Local
-        //Method is called via reflection
         private static List<T> Distinct<T>(IEnumerable<T> items, IEqualityComparer<T> comparer = null)
         {
             return items.Distinct(comparer).ToList();

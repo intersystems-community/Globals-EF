@@ -11,102 +11,102 @@ namespace GlobalsFramework.Utils.RuntimeMethodInvocation
     {
         private static readonly ConcurrentDictionary<int, MethodInfo> CachedMethods = new ConcurrentDictionary<int, MethodInfo>();
 
-        internal static void InvokeMethod(Action method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static void InvokeAction(Action method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             InvokeMethodInternal(method, binding, false, methodParameters);
         }
-        internal static void InvokeMethod<T>(Action<T> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static void InvokeAction<T>(Action<T> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             InvokeMethodInternal(method, binding, false, methodParameters);
         }
-        internal static void InvokeMethod<T1, T2>(Action<T1, T2> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static void InvokeAction<T1, T2>(Action<T1, T2> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             InvokeMethodInternal(method, binding, false, methodParameters);
         }
-        internal static void InvokeMethod<T1, T2, T3>(Action<T1, T2, T3> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static void InvokeAction<T1, T2, T3>(Action<T1, T2, T3> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             InvokeMethodInternal(method, binding, false, methodParameters);
         }
-        internal static void InvokeMethod<T1, T2, T3, T4>(Action<T1, T2, T3, T4> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static void InvokeAction<T1, T2, T3, T4>(Action<T1, T2, T3, T4> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             InvokeMethodInternal(method, binding, false, methodParameters);
         }
-        internal static void InvokeMethod<T1, T2, T3, T4, T5>(Action<T1, T2, T3, T4, T5> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static void InvokeAction<T1, T2, T3, T4, T5>(Action<T1, T2, T3, T4, T5> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             InvokeMethodInternal(method, binding, false, methodParameters);
         }
 
-        internal static void InvokeMethodCached(Action method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static void InvokeActionCached(Action method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             InvokeMethodInternal(method, binding, true, methodParameters);
         }
-        internal static void InvokeMethodCached<T>(Action<T> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static void InvokeActionCached<T>(Action<T> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             InvokeMethodInternal(method, binding, true, methodParameters);
         }
-        internal static void InvokeMethodCached<T1, T2>(Action<T1, T2> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static void InvokeActionCached<T1, T2>(Action<T1, T2> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             InvokeMethodInternal(method, binding, true, methodParameters);
         }
-        internal static void InvokeMethodCached<T1, T2, T3>(Action<T1, T2, T3> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static void InvokeActionCached<T1, T2, T3>(Action<T1, T2, T3> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             InvokeMethodInternal(method, binding, true, methodParameters);
         }
-        internal static void InvokeMethodCached<T1, T2, T3, T4>(Action<T1, T2, T3, T4> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static void InvokeActionCached<T1, T2, T3, T4>(Action<T1, T2, T3, T4> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             InvokeMethodInternal(method, binding, true, methodParameters);
         }
-        internal static void InvokeMethodCached<T1, T2, T3, T4, T5>(Action<T1, T2, T3, T4, T5> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static void InvokeActionCached<T1, T2, T3, T4, T5>(Action<T1, T2, T3, T4, T5> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             InvokeMethodInternal(method, binding, true, methodParameters);
         }
 
-        internal static object InvokeMethod<TResult>(Func<TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static object InvokeFunc<TResult>(Func<TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             return InvokeMethodInternal(method, binding, false, methodParameters);
         }
-        internal static object InvokeMethod<T, TResult>(Func<T, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static object InvokeFunc<T, TResult>(Func<T, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             return InvokeMethodInternal(method, binding, false, methodParameters);
         }
-        internal static object InvokeMethod<T1, T2, TResult>(Func<T1, T2, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static object InvokeFunc<T1, T2, TResult>(Func<T1, T2, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             return InvokeMethodInternal(method, binding, false, methodParameters);
         }
-        internal static object InvokeMethod<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static object InvokeFunc<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             return InvokeMethodInternal(method, binding, false, methodParameters);
         }
-        internal static object InvokeMethod<T1, T2, T3, T4, TResult>(Func<T1, T2, T3, T4, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static object InvokeFunc<T1, T2, T3, T4, TResult>(Func<T1, T2, T3, T4, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             return InvokeMethodInternal(method, binding, false, methodParameters);
         }
-        internal static object InvokeMethod<T1, T2, T3, T4, T5, TResult>(Action<T1, T2, T3, T4, T5, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static object InvokeFunc<T1, T2, T3, T4, T5, TResult>(Action<T1, T2, T3, T4, T5, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             return InvokeMethodInternal(method, binding, false, methodParameters);
         }
 
-        internal static object InvokeMethodCached<TResult>(Func<TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static object InvokeFuncCached<TResult>(Func<TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             return InvokeMethodInternal(method, binding, true, methodParameters);
         }
-        internal static object InvokeMethodCached<T, TResult>(Func<T, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static object InvokeFuncCached<T, TResult>(Func<T, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             return InvokeMethodInternal(method, binding, true, methodParameters);
         }
-        internal static object InvokeMethodCached<T1, T2, TResult>(Func<T1, T2, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static object InvokeFuncCached<T1, T2, TResult>(Func<T1, T2, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             return InvokeMethodInternal(method, binding, true, methodParameters);
         }
-        internal static object InvokeMethodCached<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static object InvokeFuncCached<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             return InvokeMethodInternal(method, binding, true, methodParameters);
         }
-        internal static object InvokeMethodCached<T1, T2, T3, T4, TResult>(Func<T1, T2, T3, T4, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static object InvokeFuncCached<T1, T2, T3, T4, TResult>(Func<T1, T2, T3, T4, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             return InvokeMethodInternal(method, binding, true, methodParameters);
         }
-        internal static object InvokeMethodCached<T1, T2, T3, T4, T5, TResult>(Action<T1, T2, T3, T4, T5, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
+        internal static object InvokeFuncCached<T1, T2, T3, T4, T5, TResult>(Action<T1, T2, T3, T4, T5, TResult> method, RuntimeTypeBinding binding, params object[] methodParameters)
         {
             return InvokeMethodInternal(method, binding, true, methodParameters);
         }

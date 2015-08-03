@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Reflection;
 using GlobalsFramework.Linq.ExpressionCaching;
 using GlobalsFramework.Linq.ExpressionProcessing;
 using GlobalsFramework.Linq.Helpers;
@@ -54,13 +53,6 @@ namespace GlobalsFramework.Linq.QueryProcessing.OrderingQueries
 
             keysResult = new ProcessingResult(true, keysResult.GetLoadedItems(keySelector.ReturnType));
             return QueryProcessingHelper.NormalizeMultipleResult(keysResult, keySelector.ReturnType);
-        }
-
-        protected MethodInfo MakeGenericMethod(string methodName, params Type[] typeArguments)
-        {
-            return GetType()
-                .GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static)
-                .MakeGenericMethod(typeArguments);
         }
     }
 }

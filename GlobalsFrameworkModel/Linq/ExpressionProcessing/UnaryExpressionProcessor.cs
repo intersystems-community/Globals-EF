@@ -96,9 +96,9 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             Func<dynamic, dynamic> convertMethod;
 
             if (!isChecked)
-                convertMethod = value => TypeConverter.Instance.ConvertUnchecked(value, expression.Type);
+                convertMethod = value => TypeConverter.ConvertUnchecked(value, expression.Type);
             else
-                convertMethod = value => TypeConverter.Instance.ConvertChecked(value, expression.Type);
+                convertMethod = value => TypeConverter.ConvertChecked(value, expression.Type);
 
             return PerformUnaryOperation(expression, references, convertMethod);
         }
@@ -127,7 +127,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
         private static ProcessingResult ProcessTypeAsExpression(UnaryExpression expression, List<NodeReference> references)
         {
-            Func<dynamic, dynamic> typeAsMethod = value => TypeConverter.Instance.TypeAsOperation(value, expression.Type);
+            Func<dynamic, dynamic> typeAsMethod = value => TypeConverter.TypeAsOperation(value, expression.Type);
             return PerformUnaryOperation(expression, references, typeAsMethod);
         }
 

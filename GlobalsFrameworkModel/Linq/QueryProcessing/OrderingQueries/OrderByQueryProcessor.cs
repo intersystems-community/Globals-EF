@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using GlobalsFramework.Linq.DeferredOrdering;
 using GlobalsFramework.Linq.ExpressionProcessing;
 using GlobalsFramework.Linq.Helpers;
+using GlobalsFramework.Utils.RuntimeMethodInvocation;
 using InterSystems.Globals;
 
 namespace GlobalsFramework.Linq.QueryProcessing.OrderingQueries
@@ -34,15 +36,17 @@ namespace GlobalsFramework.Linq.QueryProcessing.OrderingQueries
                 ? typeof(NodeReference)
                 : QueryProcessingHelper.GetSourceParameterType(query);
 
-            var creationMethod = MakeGenericMethod("CreateOrderedEnumerable", sourceType, keyType);
-            var orderedEnumerable = creationMethod.Invoke(null, new[] { parentResult.Result, keysResult.Result, comparer, descending });
+            Func<IEnumerable<RuntimeType1>, List<RuntimeType2>, IComparer<RuntimeType2>, bool,
+                OrderedEnumerable<RuntimeType1>> func = CreateOrderedEnumerable;
+
+            var orderedEnumerable = RuntimeMethodInvoker.InvokeFuncCached(func,
+                new RuntimeTypeBinding {new RuntimeType1(sourceType), new RuntimeType2(keyType)},
+                parentResult.Result, keysResult.Result, comparer, descending);
 
             return new ProcessingResult(true, orderedEnumerable);
         }
 
-        //ReSharper disable once UnusedMember.Local
-        //Method is called via reflection
-        private static OrderedEnumerable<TSource, TKey> CreateOrderedEnumerable<TSource, TKey>(IEnumerable<TSource> source,
+        private static OrderedEnumerable<TSource> CreateOrderedEnumerable<TSource, TKey>(IEnumerable<TSource> source,
             List<TKey> keys, IComparer<TKey> comparer, bool descending)
         {
             return new OrderedEnumerable<TSource, TKey>(source, keys, comparer, descending);
