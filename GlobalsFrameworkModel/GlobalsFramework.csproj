@@ -143,6 +143,10 @@
     <Compile Include="Utils\ConnectionManagement\ConnectionManager.cs" />
     <Compile Include="Utils\ConnectionManagement\ThreadResult.cs" />
     <Compile Include="Utils\PrimaryKeyCalculation\PrimaryKeyCalculator.cs" />
+    <Compile Include="Utils\RuntimeMethodInvocation\BaseRuntimeType.cs" />
+    <Compile Include="Utils\RuntimeMethodInvocation\IRuntimeType.cs" />
+    <Compile Include="Utils\RuntimeMethodInvocation\RuntimeMethodInvoker.cs" />
+    <Compile Include="Utils\RuntimeMethodInvocation\RuntimeTypeBinding.cs" />
     <Compile Include="Utils\TypeConversion\TypeConverter.cs" />
     <Compile Include="Utils\TypeDescription\EntityTypeDescription.cs" />
     <Compile Include="Utils\TypeDescription\EntityTypeDescriptor.cs" />
