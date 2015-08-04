@@ -11,7 +11,7 @@ namespace GlobalsFramework.Linq.QueryProcessing.SequenceComparisonQueries
     {
         public abstract bool CanProcess(MethodCallExpression query);
 
-        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
+        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult, DataContext context)
         {
             var source1 = parentResult.GetLoadedItems(QueryProcessingHelper.GetSourceParameterType(query));
 

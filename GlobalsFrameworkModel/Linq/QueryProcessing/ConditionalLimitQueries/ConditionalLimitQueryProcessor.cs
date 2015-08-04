@@ -12,7 +12,7 @@ namespace GlobalsFramework.Linq.QueryProcessing.ConditionalLimitQueries
     {
         public abstract bool CanProcess(MethodCallExpression query);
 
-        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
+        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult, DataContext context)
         {
             if (!parentResult.IsDeferred())
                 return ProcessingResult.Unsuccessful;
@@ -27,7 +27,7 @@ namespace GlobalsFramework.Linq.QueryProcessing.ConditionalLimitQueries
             while (enumerator.MoveNext())
             {
                 var predicateResult = ExpressionProcessingHelper.ProcessPredicate(predicateExpression,
-                    new List<NodeReference>(1) {(NodeReference) enumerator.Current});
+                    new List<NodeReference>(1) {(NodeReference) enumerator.Current}, context);
 
                 if (!predicateResult.IsSuccess)
                     return ProcessingResult.Unsuccessful;

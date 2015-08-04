@@ -11,7 +11,7 @@ namespace GlobalsFramework.Linq.QueryProcessing
             return query.Method.Name == "Select";
         }
 
-        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
+        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult, DataContext context)
         {
             if (!parentResult.IsDeferred())
                 return ProcessingResult.Unsuccessful;
@@ -25,7 +25,7 @@ namespace GlobalsFramework.Linq.QueryProcessing
             var memberExpression = lambdaExpression.Body;
             var nodeReferences = parentResult.GetDeferredList();
 
-            var result = ExpressionProcessingHelper.ProcessExpression(memberExpression, nodeReferences);
+            var result = ExpressionProcessingHelper.ProcessExpression(memberExpression, nodeReferences, context);
 
             if (!result.IsSuccess)
                 return ProcessingResult.Unsuccessful;
@@ -36,7 +36,7 @@ namespace GlobalsFramework.Linq.QueryProcessing
                 return QueryProcessingHelper.NormalizeMultipleResult(result, targetItemType);
 
             var multipleResult = ExpressionProcessingHelper.CopyInstances(result, nodeReferences.Count,
-                () => ExpressionProcessingHelper.ProcessExpression(memberExpression, nodeReferences).Result);
+                () => ExpressionProcessingHelper.ProcessExpression(memberExpression, nodeReferences, context).Result);
 
             return new ProcessingResult(true, QueryProcessingHelper.NormalizeMultipleResult(multipleResult, targetItemType).Result);
         }

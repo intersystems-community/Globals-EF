@@ -31,7 +31,7 @@ namespace GlobalsFramework.Linq.Helpers
             };
         }
 
-        internal static ProcessingResult ProcessPredicate(Expression predicateExpression, IEnumerable<NodeReference> references)
+        internal static ProcessingResult ProcessPredicate(Expression predicateExpression, IEnumerable<NodeReference> references, DataContext context)
         {
             var unaryExpression = predicateExpression as UnaryExpression;
 
@@ -43,15 +43,15 @@ namespace GlobalsFramework.Linq.Helpers
             if ((lambdaExpression == null) || (lambdaExpression.Parameters.Count > 1))
                 return ProcessingResult.Unsuccessful;
 
-            return ProcessPredicateInternal(lambdaExpression.Body, references.ToList());
+            return ProcessPredicateInternal(lambdaExpression.Body, references.ToList(), context);
         }
 
-        internal static ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references)
+        internal static ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references, DataContext context)
         {
             foreach (var expressionProcessor in ExpressionProcessors)
             {
                 if (expressionProcessor.CanProcess(expression))
-                    return expressionProcessor.ProcessExpression(expression, references);
+                    return expressionProcessor.ProcessExpression(expression, references, context);
             }
 
             return ProcessingResult.Unsuccessful;
@@ -70,11 +70,11 @@ namespace GlobalsFramework.Linq.Helpers
             return new ProcessingResult(true, resultList);
         }
 
-        private static ProcessingResult ProcessPredicateInternal(Expression predicateExpression, List<NodeReference> references)
+        private static ProcessingResult ProcessPredicateInternal(Expression predicateExpression, List<NodeReference> references, DataContext context)
         {
             var resultReferences = new List<NodeReference>();
 
-            var processingResult = ProcessExpression(predicateExpression, references);
+            var processingResult = ProcessExpression(predicateExpression, references, context);
             if (!processingResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 

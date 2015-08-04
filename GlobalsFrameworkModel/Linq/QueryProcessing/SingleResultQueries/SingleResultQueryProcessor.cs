@@ -10,7 +10,7 @@ namespace GlobalsFramework.Linq.QueryProcessing.SingleResultQueries
     {
         public abstract bool CanProcess(MethodCallExpression query);
 
-        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
+        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult, DataContext context)
         {
             var hasPredicate = query.Arguments.Count == 2;
 
@@ -21,7 +21,7 @@ namespace GlobalsFramework.Linq.QueryProcessing.SingleResultQueries
                 return ProcessingResult.Unsuccessful;
 
             var predicate = query.Arguments[1];
-            var predicateResult = ExpressionProcessingHelper.ProcessPredicate(predicate, parentResult.GetDeferredItems());
+            var predicateResult = ExpressionProcessingHelper.ProcessPredicate(predicate, parentResult.GetDeferredItems(), context);
 
             return predicateResult.IsSuccess
                 ? ProcessQuery(predicateResult.GetItems().GetEnumerator(), QueryProcessingHelper.GetReturnParameterType(query))

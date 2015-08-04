@@ -14,13 +14,13 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             return expression.NodeType == ExpressionType.TypeIs;
         }
 
-        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references)
+        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references, DataContext context)
         {
             var typeBinaryExpression = expression as TypeBinaryExpression;
             if (typeBinaryExpression == null)
                 return ProcessingResult.Unsuccessful;
 
-            var result = ExpressionProcessingHelper.ProcessExpression(typeBinaryExpression.Expression, references);
+            var result = ExpressionProcessingHelper.ProcessExpression(typeBinaryExpression.Expression, references, context);
             if (!result.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 

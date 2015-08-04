@@ -12,7 +12,7 @@ namespace GlobalsFramework.Linq.QueryProcessing.OrderingQueries
     {
         public abstract bool CanProcess(MethodCallExpression query);
 
-        public abstract ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult);
+        public abstract ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult, DataContext context);
 
         protected LambdaExpression GetKeySelector(MethodCallExpression query)
         {
@@ -25,7 +25,7 @@ namespace GlobalsFramework.Linq.QueryProcessing.OrderingQueries
             return !hasComparer ? null : ((ConstantExpression)query.Arguments[2]).Value;
         }
 
-        protected ProcessingResult GetKeys(LambdaExpression keySelector, ProcessingResult parentResult)
+        protected ProcessingResult GetKeys(LambdaExpression keySelector, ProcessingResult parentResult, DataContext context)
         {
             if (!parentResult.IsDeferred())
             {
@@ -41,14 +41,14 @@ namespace GlobalsFramework.Linq.QueryProcessing.OrderingQueries
             }
 
             var nodeReferences = parentResult.GetDeferredList();
-            var keysResult = ExpressionProcessingHelper.ProcessExpression(keySelector.Body, nodeReferences);
+            var keysResult = ExpressionProcessingHelper.ProcessExpression(keySelector.Body, nodeReferences, context);
             if (!keysResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
             if (keysResult.IsSingleItem)
             {
                 keysResult = ExpressionProcessingHelper.CopyInstances(keysResult, nodeReferences.Count,
-                    () => ExpressionProcessingHelper.ProcessExpression(keySelector.Body, nodeReferences).Result);
+                    () => ExpressionProcessingHelper.ProcessExpression(keySelector.Body, nodeReferences, context).Result);
             }
 
             keysResult = new ProcessingResult(true, keysResult.GetLoadedItems(keySelector.ReturnType));

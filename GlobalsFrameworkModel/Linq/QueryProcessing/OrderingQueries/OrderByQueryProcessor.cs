@@ -17,17 +17,17 @@ namespace GlobalsFramework.Linq.QueryProcessing.OrderingQueries
             return methodName == "OrderBy" || methodName == "OrderByDescending";
         }
 
-        public override ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
+        public override ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult, DataContext context)
         {
-            return ProcessOrderBy(query, parentResult, query.Method.Name == "OrderByDescending");
+            return ProcessOrderBy(query, parentResult, context, query.Method.Name == "OrderByDescending");
         }
 
-        private ProcessingResult ProcessOrderBy(MethodCallExpression query, ProcessingResult parentResult, bool descending)
+        private ProcessingResult ProcessOrderBy(MethodCallExpression query, ProcessingResult parentResult, DataContext context, bool descending)
         {
             var keySelector = GetKeySelector(query);
             var comparer = GetComparer(query);
 
-            var keysResult = GetKeys(keySelector, parentResult);
+            var keysResult = GetKeys(keySelector, parentResult, context);
             if (!keysResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 

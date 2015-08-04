@@ -30,36 +30,36 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             }
         }
 
-        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references)
+        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references, DataContext context)
         {
             switch (expression.NodeType)
             {
                 case ExpressionType.Convert:
-                    return ProcessConvertExpression(expression as UnaryExpression, references);
+                    return ProcessConvertExpression(expression as UnaryExpression, references, context);
                 case ExpressionType.ConvertChecked:
-                    return ProcessConvertExpression(expression as UnaryExpression, references, true);
+                    return ProcessConvertExpression(expression as UnaryExpression, references, context, true);
                 case ExpressionType.ArrayLength:
-                    return ProcessArrayLengthExpression(expression as UnaryExpression, references);
+                    return ProcessArrayLengthExpression(expression as UnaryExpression, references, context);
                 case ExpressionType.Negate:
-                    return ProcessNegateExpression(expression as UnaryExpression, references);
+                    return ProcessNegateExpression(expression as UnaryExpression, references, context);
                 case ExpressionType.NegateChecked:
-                    return ProcessNegateExpression(expression as UnaryExpression, references, true);
+                    return ProcessNegateExpression(expression as UnaryExpression, references, context, true);
                 case ExpressionType.Not:
-                    return ProcessNotExpression(expression as UnaryExpression, references);
+                    return ProcessNotExpression(expression as UnaryExpression, references, context);
                 case ExpressionType.TypeAs:
-                    return ProcessTypeAsExpression(expression as UnaryExpression, references);
+                    return ProcessTypeAsExpression(expression as UnaryExpression, references, context);
                 case ExpressionType.UnaryPlus:
-                    return ProcessUnaryPlusExpression(expression as UnaryExpression, references);
+                    return ProcessUnaryPlusExpression(expression as UnaryExpression, references, context);
                 case ExpressionType.OnesComplement:
-                    return ProcessOnesComplementExpression(expression as UnaryExpression, references);
+                    return ProcessOnesComplementExpression(expression as UnaryExpression, references, context);
                 default:
                     return ProcessingResult.Unsuccessful;
             }
         }
 
-        private static ProcessingResult ProcessArrayLengthExpression(UnaryExpression expression, List<NodeReference> references)
+        private static ProcessingResult ProcessArrayLengthExpression(UnaryExpression expression, List<NodeReference> references, DataContext context)
         {
-            var parentResult = ExpressionProcessingHelper.ProcessExpression(expression.Operand, references);
+            var parentResult = ExpressionProcessingHelper.ProcessExpression(expression.Operand, references, context);
             if (!parentResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
@@ -68,7 +68,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
                 var deferredResult = parentResult.GetDeferredItem();
                 return deferredResult != null
                     ? new ProcessingResult(true, DatabaseManager.GetEnumerableCount(deferredResult), true)
-                    : new ProcessingResult(true, (parentResult.Result as Array).Length, true);
+                    : new ProcessingResult(true, ((Array) parentResult.Result).Length, true);
             }
 
             var deferredItems = parentResult.GetDeferredItems();
@@ -84,14 +84,14 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
             foreach (var resultItem in resultItems)
             {
-                var array = resultItem as Array;
+                var array = (Array) resultItem;
                 result.Add(array.Length);
             }
 
             return new ProcessingResult(true, result);
         }
 
-        private static ProcessingResult ProcessConvertExpression(UnaryExpression expression, List<NodeReference> references, bool isChecked = false)
+        private static ProcessingResult ProcessConvertExpression(UnaryExpression expression, List<NodeReference> references, DataContext context, bool isChecked = false)
         {
             Func<dynamic, dynamic> convertMethod;
 
@@ -100,10 +100,10 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             else
                 convertMethod = value => TypeConverter.ConvertChecked(value, expression.Type);
 
-            return PerformUnaryOperation(expression, references, convertMethod);
+            return PerformUnaryOperation(expression, references, context, convertMethod);
         }
 
-        private static ProcessingResult ProcessNegateExpression(UnaryExpression expression, List<NodeReference> references, bool isChecked = false)
+        private static ProcessingResult ProcessNegateExpression(UnaryExpression expression, List<NodeReference> references, DataContext context, bool isChecked = false)
         {
             Func<dynamic, dynamic> negateMethod;
 
@@ -112,41 +112,41 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             else
                 negateMethod = value => checked (-value);
 
-            return PerformUnaryOperation(expression, references, negateMethod);
+            return PerformUnaryOperation(expression, references, context, negateMethod);
         }
 
-        private static ProcessingResult ProcessNotExpression(UnaryExpression expression, List<NodeReference> references)
+        private static ProcessingResult ProcessNotExpression(UnaryExpression expression, List<NodeReference> references, DataContext context)
         {
             //ones complement and logical not operations are mapped to the same Not Expression
             if (!IsLogicalNotOperation(expression))
-                return ProcessOnesComplementExpression(expression, references);
+                return ProcessOnesComplementExpression(expression, references, context);
 
             Func<dynamic, dynamic> notOperatorMethod = value => !value;
-            return PerformUnaryOperation(expression, references, notOperatorMethod);
+            return PerformUnaryOperation(expression, references, context, notOperatorMethod);
         }
 
-        private static ProcessingResult ProcessTypeAsExpression(UnaryExpression expression, List<NodeReference> references)
+        private static ProcessingResult ProcessTypeAsExpression(UnaryExpression expression, List<NodeReference> references, DataContext context)
         {
             Func<dynamic, dynamic> typeAsMethod = value => TypeConverter.TypeAsOperation(value, expression.Type);
-            return PerformUnaryOperation(expression, references, typeAsMethod);
+            return PerformUnaryOperation(expression, references, context, typeAsMethod);
         }
 
-        private static ProcessingResult ProcessUnaryPlusExpression(UnaryExpression expression, List<NodeReference> references)
+        private static ProcessingResult ProcessUnaryPlusExpression(UnaryExpression expression, List<NodeReference> references, DataContext context)
         {
             Func<dynamic, dynamic> unaryPlusMethod = value => +value;
-            return PerformUnaryOperation(expression, references, unaryPlusMethod);
+            return PerformUnaryOperation(expression, references, context, unaryPlusMethod);
         }
 
-        private static ProcessingResult ProcessOnesComplementExpression(UnaryExpression expression, List<NodeReference> references)
+        private static ProcessingResult ProcessOnesComplementExpression(UnaryExpression expression, List<NodeReference> references, DataContext context)
         {
             Func<dynamic, dynamic> onesComplementMethod = value => ~value;
-            return PerformUnaryOperation(expression, references, onesComplementMethod);
+            return PerformUnaryOperation(expression, references, context, onesComplementMethod);
         }
 
         private static ProcessingResult PerformUnaryOperation(UnaryExpression expression, List<NodeReference> references,
-            Func<dynamic, dynamic> operationResolver)
+            DataContext context, Func<dynamic, dynamic> operationResolver)
         {
-            var operandResult = ExpressionProcessingHelper.ProcessExpression(expression.Operand, references);
+            var operandResult = ExpressionProcessingHelper.ProcessExpression(expression.Operand, references, context);
             if (!operandResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 

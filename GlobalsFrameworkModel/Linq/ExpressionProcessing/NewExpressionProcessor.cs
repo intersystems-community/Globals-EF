@@ -15,13 +15,13 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             return expression.NodeType == ExpressionType.New;
         }
 
-        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references)
+        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references, DataContext context)
         {
             var newExpression = expression as NewExpression;
             if (newExpression == null)
                 return ProcessingResult.Unsuccessful;
 
-            var argumentsResult = CallProcessingHelper.ProcessArguments(newExpression.Arguments, references);
+            var argumentsResult = CallProcessingHelper.ProcessArguments(newExpression.Arguments, references, context);
             if (!argumentsResult.All(a => a.IsSuccess))
                 return ProcessingResult.Unsuccessful;
 

@@ -111,7 +111,7 @@ namespace GlobalsFramework.Linq
 
         internal NodeReference CreateNodeReference()
         {
-            return Context.GetConnection().CreateNodeReference(_dbSetName);
+            return Context.CreateNodeReference(_dbSetName);
         }
     }
 }

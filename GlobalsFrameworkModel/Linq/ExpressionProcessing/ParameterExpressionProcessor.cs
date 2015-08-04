@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq.Expressions;
-using GlobalsFramework.Extensions;
 using InterSystems.Globals;
 
 namespace GlobalsFramework.Linq.ExpressionProcessing
@@ -12,9 +11,9 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             return expression.NodeType == ExpressionType.Parameter;
         }
 
-        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references)
+        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references, DataContext context)
         {
-            return new ProcessingResult(true, references.DeepCopy());
+            return new ProcessingResult(true, context.CopyReferences(references));
         }
     }
 }

@@ -10,7 +10,7 @@ namespace GlobalsFramework.Linq.QueryProcessing.MathQueries
     {
         public abstract bool CanProcess(MethodCallExpression query);
 
-        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
+        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult, DataContext context)
         {
             if (!parentResult.IsDeferred())
                 return ProcessingResult.Unsuccessful;
@@ -27,7 +27,7 @@ namespace GlobalsFramework.Linq.QueryProcessing.MathQueries
             var unaryExpression = (UnaryExpression) query.Arguments[1];
             var selectorLambda = (LambdaExpression)unaryExpression.Operand;
 
-            var selectorResult = ExpressionProcessingHelper.ProcessExpression(selectorLambda.Body, parentResult.GetDeferredList());
+            var selectorResult = ExpressionProcessingHelper.ProcessExpression(selectorLambda.Body, parentResult.GetDeferredList(), context);
 
             if (!selectorResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;

@@ -11,7 +11,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             return expression.NodeType == ExpressionType.Constant;
         }
 
-        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references)
+        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references, DataContext context)
         {
             var constantExpression = expression as ConstantExpression;
 

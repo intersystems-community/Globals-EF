@@ -21,22 +21,22 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             }
         }
 
-        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references)
+        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references, DataContext context)
         {
             switch (expression.NodeType)
             {
                 case ExpressionType.NewArrayBounds:
-                    return ProcessNewArrayBoundsExpression(expression as NewArrayExpression, references);
+                    return ProcessNewArrayBoundsExpression(expression as NewArrayExpression, references, context);
                 case ExpressionType.NewArrayInit:
-                    return ProcessNewArrayInitExpression(expression as NewArrayExpression, references);
+                    return ProcessNewArrayInitExpression(expression as NewArrayExpression, references, context);
                 default:
                     return ProcessingResult.Unsuccessful;
             }
         }
 
-        private static ProcessingResult ProcessNewArrayBoundsExpression(NewArrayExpression expression, List<NodeReference> references)
+        private static ProcessingResult ProcessNewArrayBoundsExpression(NewArrayExpression expression, List<NodeReference> references, DataContext context)
         {
-            var dimensionsLengths = CallProcessingHelper.ProcessArguments(expression.Expressions, references);
+            var dimensionsLengths = CallProcessingHelper.ProcessArguments(expression.Expressions, references, context);
             if (!dimensionsLengths.All(d => d.IsSuccess))
                 return ProcessingResult.Unsuccessful;
 
@@ -53,9 +53,9 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             });
         }
 
-        private static ProcessingResult ProcessNewArrayInitExpression(NewArrayExpression expression, List<NodeReference> references)
+        private static ProcessingResult ProcessNewArrayInitExpression(NewArrayExpression expression, List<NodeReference> references, DataContext context)
         {
-            var items = CallProcessingHelper.ProcessArguments(expression.Expressions, references);
+            var items = CallProcessingHelper.ProcessArguments(expression.Expressions, references, context);
             if (!items.All(i => i.IsSuccess))
                 return ProcessingResult.Unsuccessful;
 

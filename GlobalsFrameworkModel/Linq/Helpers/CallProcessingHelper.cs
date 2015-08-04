@@ -10,7 +10,7 @@ namespace GlobalsFramework.Linq.Helpers
 {
     internal static class CallProcessingHelper
     {
-        internal static List<ProcessingResult> ProcessArguments(IEnumerable<Expression> argumentExpressions, List<NodeReference> references)
+        internal static List<ProcessingResult> ProcessArguments(IEnumerable<Expression> argumentExpressions, List<NodeReference> references, DataContext context)
         {
             var result = new List<ProcessingResult>();
 
@@ -32,7 +32,7 @@ namespace GlobalsFramework.Linq.Helpers
                     continue;
                 }
 
-                var processingResult = ExpressionProcessingHelper.ProcessExpression(argumentExp, references);
+                var processingResult = ExpressionProcessingHelper.ProcessExpression(argumentExp, references, context);
                 if (!processingResult.IsSuccess)
                 {
                     result.Add(ProcessingResult.Unsuccessful);

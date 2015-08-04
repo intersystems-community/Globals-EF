@@ -60,27 +60,27 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             }
         }
 
-        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references)
+        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references, DataContext context)
         {
             switch (expression.NodeType)
             {
                 case ExpressionType.ArrayIndex:
-                    return ProcessArrayIndexExpression(expression as BinaryExpression, references);
+                    return ProcessArrayIndexExpression(expression as BinaryExpression, references, context);
                 case ExpressionType.AndAlso:
                 case ExpressionType.OrElse:
-                    return ProcessShortCircuitingExpression(expression as BinaryExpression, references, expression.NodeType);
+                    return ProcessShortCircuitingExpression(expression as BinaryExpression, references, expression.NodeType, context);
                 default:
-                    return ProcessExpressionByDefault(expression as BinaryExpression, references);
+                    return ProcessExpressionByDefault(expression as BinaryExpression, references, context);
             }
         }
 
-        private static ProcessingResult ProcessArrayIndexExpression(BinaryExpression expression, List<NodeReference> references)
+        private static ProcessingResult ProcessArrayIndexExpression(BinaryExpression expression, List<NodeReference> references, DataContext context)
         {
-            var arrayResult = ExpressionProcessingHelper.ProcessExpression(expression.Left, references);
+            var arrayResult = ExpressionProcessingHelper.ProcessExpression(expression.Left, references, context);
             if (!arrayResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
-            var indexResult = ExpressionProcessingHelper.ProcessExpression(expression.Right, references);
+            var indexResult = ExpressionProcessingHelper.ProcessExpression(expression.Right, references, context);
             if (!indexResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
@@ -99,18 +99,18 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
         }
 
         private static ProcessingResult ProcessShortCircuitingExpression(BinaryExpression expression,
-            List<NodeReference> references, ExpressionType operationType)
+            List<NodeReference> references, ExpressionType operationType, DataContext context)
         {
             if (!(expression.Left.Type == typeof (bool) && expression.Right.Type == typeof (bool)))
-                return ProcessExpressionByDefault(expression, references);
+                return ProcessExpressionByDefault(expression, references, context);
 
-            var leftResult = ExpressionProcessingHelper.ProcessExpression(expression.Left, references);
+            var leftResult = ExpressionProcessingHelper.ProcessExpression(expression.Left, references, context);
             if (!leftResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
             var operationResult = IterateNodesItems(leftResult, new ProcessingResult(true, references),
                 (left, right) =>
-                    PerformShortCircuitingOperation((bool) left, expression.Right, (NodeReference) right, operationType));
+                    PerformShortCircuitingOperation((bool) left, expression.Right, (NodeReference) right, operationType, context));
 
             var resultList = new List<object>();
 
@@ -128,13 +128,13 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
 
         }
 
-        private static ProcessingResult ProcessExpressionByDefault(BinaryExpression expression, List<NodeReference> references)
+        private static ProcessingResult ProcessExpressionByDefault(BinaryExpression expression, List<NodeReference> references, DataContext context)
         {
-            var leftResult = ExpressionProcessingHelper.ProcessExpression(expression.Left, references);
+            var leftResult = ExpressionProcessingHelper.ProcessExpression(expression.Left, references, context);
             if (!leftResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
-            var rightResult = ExpressionProcessingHelper.ProcessExpression(expression.Right, references);
+            var rightResult = ExpressionProcessingHelper.ProcessExpression(expression.Right, references, context);
             if (!rightResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
@@ -285,7 +285,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
         }
 
         private static ProcessingResult PerformShortCircuitingOperation(bool left, Expression rightExpression,
-            NodeReference reference, ExpressionType operationType)
+            NodeReference reference, ExpressionType operationType, DataContext context)
         {
             if ((operationType == ExpressionType.AndAlso) && (!left))
                 return new ProcessingResult(true, false, true);
@@ -294,7 +294,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
                 return new ProcessingResult(true, true, true);
 
             var rightResult = ExpressionProcessingHelper.ProcessExpression(rightExpression,
-                new List<NodeReference>(1) {reference});
+                new List<NodeReference>(1) {reference}, context);
             if (!rightResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 

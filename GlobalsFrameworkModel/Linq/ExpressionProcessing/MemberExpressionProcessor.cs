@@ -19,7 +19,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             return expression.NodeType == ExpressionType.MemberAccess;
         }
 
-        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references)
+        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references, DataContext context)
         {
             var memberExpression = expression as MemberExpression;
             if (memberExpression == null)
@@ -39,7 +39,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
                 return ProcessingResult.Unsuccessful;
             }
 
-            var parentResult = ExpressionProcessingHelper.ProcessExpression(memberExpression.Expression, references);
+            var parentResult = ExpressionProcessingHelper.ProcessExpression(memberExpression.Expression, references, context);
             if (!parentResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 

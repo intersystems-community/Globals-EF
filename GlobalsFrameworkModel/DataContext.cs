@@ -58,6 +58,48 @@ namespace GlobalsFramework
             return _connection;
         }
 
+        internal NodeReference CreateNodeReference(string name)
+        {
+            return _connection.CreateNodeReference(name);
+        }
+
+        internal NodeReference CreateNodeReference()
+        {
+            return _connection.CreateNodeReference();
+        }
+
+        internal NodeReference CopyReference(NodeReference reference)
+        {
+            var result = CreateNodeReference();
+            result.SetName(reference.GetName());
+
+            var subscriptCount = reference.GetSubscriptCount();
+
+            if (subscriptCount <= 0)
+                return result;
+
+            for (var position = 1; position <= subscriptCount; position++)
+            {
+                var subscript = reference.GetObjectSubscript(position);
+
+                if (subscript is int)
+                    result.AppendSubscript((int)subscript);
+                else if (subscript is long)
+                    result.AppendSubscript((long)subscript);
+                else if (subscript is double)
+                    result.AppendSubscript((double)subscript);
+                else
+                    result.AppendSubscript((string)subscript);
+            }
+
+            return result;
+        }
+
+        internal List<NodeReference> CopyReferences(IEnumerable<NodeReference> references)
+        {
+            return references.Select(CopyReference).ToList();
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)

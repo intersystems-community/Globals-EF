@@ -14,17 +14,17 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             return expression.NodeType == ExpressionType.MemberInit;
         }
 
-        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references)
+        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references, DataContext context)
         {
             var memberInitExpression = expression as MemberInitExpression;
             if (memberInitExpression == null)
                 return ProcessingResult.Unsuccessful;
 
-            var instanceResult = ExpressionProcessingHelper.ProcessExpression(memberInitExpression.NewExpression, references);
+            var instanceResult = ExpressionProcessingHelper.ProcessExpression(memberInitExpression.NewExpression, references, context);
             if (!instanceResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
-            var evaluatedBindings = MemberBindingEvaluator.EvaluateBindings(memberInitExpression.Bindings.ToList(), references);
+            var evaluatedBindings = MemberBindingEvaluator.EvaluateBindings(memberInitExpression.Bindings.ToList(), references, context);
 
             if (evaluatedBindings.Any(b => !b.IsSuccess))
                 return ProcessingResult.Unsuccessful;
@@ -32,7 +32,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             if (instanceResult.IsSingleItem && evaluatedBindings.Any(b => !b.IsSingle))
             {
                 instanceResult = ExpressionProcessingHelper.CopyInstances(instanceResult, references.Count,
-                    () => ExpressionProcessingHelper.ProcessExpression(memberInitExpression.NewExpression, references).Result);
+                    () => ExpressionProcessingHelper.ProcessExpression(memberInitExpression.NewExpression, references, context).Result);
             }
 
             return MemberBindingProcessingHelper.ProcessBindings(evaluatedBindings, instanceResult);

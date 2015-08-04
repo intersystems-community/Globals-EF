@@ -29,10 +29,10 @@ namespace GlobalsFramework.Linq.Helpers
         internal static object ProcessQueries(NodeReference node, DataContext context, Expression queryExpression)
         {
             var queries = GetQueriesInTurn(queryExpression);
-            var nodes = DatabaseManager.GetEntitiesNodes(node, context.GetConnection());
+            var nodes = DatabaseManager.GetEntitiesNodes(node, context);
 
             var result = new ProcessingResult(true, nodes);
-            result = queries.Aggregate(result, (current, query) => ProcessQuery(query, current));
+            result = queries.Aggregate(result, (current, query) => ProcessQuery(query, current, context));
 
             if (result.IsDeferred())
             {
@@ -81,33 +81,33 @@ namespace GlobalsFramework.Linq.Helpers
             return new ProcessingResult(true, resultList);
         }
 
-        internal static ProcessingResult ProcessQueryByDefault(MethodCallExpression query, ProcessingResult parentResult)
+        internal static ProcessingResult ProcessQueryByDefault(MethodCallExpression query, ProcessingResult parentResult, DataContext context)
         {
-            var result = InvokeQuery(query, parentResult.GetLoadedItems(GetSourceParameterType(query)));
+            var result = InvokeQuery(query, parentResult.GetLoadedItems(GetSourceParameterType(query)), context);
             return new ProcessingResult(true, result);
         }
 
-        private static ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
+        private static ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult, DataContext context)
         {
             foreach (var queryProcessor in QueryProcessors)
             {
                 if (queryProcessor.CanProcess(query))
                 {
-                    var result = queryProcessor.ProcessQuery(query, parentResult);
+                    var result = queryProcessor.ProcessQuery(query, parentResult, context);
 
                     return result.IsSuccess
                         ? result
-                        : ProcessQueryByDefault(query, parentResult);
+                        : ProcessQueryByDefault(query, parentResult, context);
                 }
             }
 
-            return ProcessQueryByDefault(query, parentResult);
+            return ProcessQueryByDefault(query, parentResult, context);
         }
 
-        private static object InvokeQuery(MethodCallExpression query, object sourse)
+        private static object InvokeQuery(MethodCallExpression query, object sourse, DataContext context)
         {
             var invocationParameters = new List<object>{((IEnumerable) sourse).AsQueryable()};
-            invocationParameters.AddRange(query.Arguments.Skip(1).Select(ResolveQueryArgument));
+            invocationParameters.AddRange(query.Arguments.Skip(1).Select(arg=>ResolveQueryArgument(arg, context)));
 
             try
             {
@@ -121,7 +121,7 @@ namespace GlobalsFramework.Linq.Helpers
             }
         }
 
-        private static object ResolveQueryArgument(Expression argumentExpression)
+        private static object ResolveQueryArgument(Expression argumentExpression, DataContext context)
         {
             var unaryExpression = argumentExpression as UnaryExpression;
             if (unaryExpression != null)
@@ -135,7 +135,7 @@ namespace GlobalsFramework.Linq.Helpers
             if (callExpression != null)
             {
                 return ProcessQuery(callExpression,
-                    new ProcessingResult(true, ResolveQueryArgument(callExpression.Arguments[0]))).Result;
+                    new ProcessingResult(true, ResolveQueryArgument(callExpression.Arguments[0], context)), context).Result;
             }
 
             throw new NotSupportedException("Unable to process query argument");

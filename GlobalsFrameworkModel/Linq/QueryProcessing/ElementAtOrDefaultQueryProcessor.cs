@@ -12,7 +12,7 @@ namespace GlobalsFramework.Linq.QueryProcessing
             return query.Method.Name == "ElementAtOrDefault";
         }
 
-        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
+        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult, DataContext context)
         {
             var index = (int)((ConstantExpression)query.Arguments[1]).Value;
 

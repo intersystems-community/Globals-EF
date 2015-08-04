@@ -65,7 +65,6 @@
     <Compile Include="DataContext.cs" />
     <Compile Include="Exceptions\EntityValidationException.cs" />
     <Compile Include="Exceptions\GlobalsDbException.cs" />
-    <Compile Include="Extensions\NodeReferenceExtensions.cs" />
     <Compile Include="Linq\DeferredOrdering\IIndexedComparer.cs" />
     <Compile Include="Linq\DeferredOrdering\IDeferredOrderedEnumerable.cs" />
     <Compile Include="Linq\DeferredOrdering\OrderedEnumerable`2.cs" />

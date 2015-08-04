@@ -6,6 +6,6 @@ namespace GlobalsFramework.Linq.QueryProcessing
     internal interface IQueryProcessor
     {
         bool CanProcess(MethodCallExpression query);
-        ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult);
+        ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult, DataContext context);
     }
 }

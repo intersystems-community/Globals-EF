@@ -13,13 +13,13 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             return expression.NodeType == ExpressionType.Conditional;
         }
 
-        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references)
+        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references, DataContext context)
         {
             var conditionalExpression = expression as ConditionalExpression;
             if (conditionalExpression == null)
                 return ProcessingResult.Unsuccessful;
 
-            var testResult = ExpressionProcessingHelper.ProcessExpression(conditionalExpression.Test, references);
+            var testResult = ExpressionProcessingHelper.ProcessExpression(conditionalExpression.Test, references, context);
             if (!testResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
 
@@ -27,7 +27,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             {
                 var testValue = (bool) testResult.GetLoadedItem(typeof (bool));
                 var resultExpression = testValue ? conditionalExpression.IfTrue : conditionalExpression.IfFalse;
-                return ExpressionProcessingHelper.ProcessExpression(resultExpression, references);
+                return ExpressionProcessingHelper.ProcessExpression(resultExpression, references, context);
             }
 
             var resultValues = testResult.GetLoadedItems(typeof (bool));
@@ -38,7 +38,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             {
                 var resultExpression = (bool) resultValue ? conditionalExpression.IfTrue : conditionalExpression.IfFalse;
 
-                var processingResult = ExpressionProcessingHelper.ProcessExpression(resultExpression, new List<NodeReference>(1) {references[index]});
+                var processingResult = ExpressionProcessingHelper.ProcessExpression(resultExpression, new List<NodeReference>(1) {references[index]}, context);
                 if (!processingResult.IsSuccess)
                     return ProcessingResult.Unsuccessful;
 

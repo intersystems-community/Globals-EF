@@ -10,7 +10,8 @@ namespace GlobalsFramework.Linq.MemberBindingEvaluation
 {
     internal static class MemberBindingEvaluator
     {
-        internal static List<EvaluatedMemberBinding> EvaluateBindings(List<MemberBinding> bindings, List<NodeReference> references)
+        internal static List<EvaluatedMemberBinding> EvaluateBindings(List<MemberBinding> bindings,
+            List<NodeReference> references, DataContext context)
         {
             var result = new List<EvaluatedMemberBinding>();
 
@@ -21,13 +22,13 @@ namespace GlobalsFramework.Linq.MemberBindingEvaluation
                 switch (memberBinding.BindingType)
                 {
                     case MemberBindingType.Assignment:
-                        EvaluateMemeberAssignment(item, memberBinding as MemberAssignment, references);
+                        EvaluateMemeberAssignment(item, memberBinding as MemberAssignment, references, context);
                         break;
                     case MemberBindingType.ListBinding:
-                        EvaluateListBinding(item, memberBinding as MemberListBinding, references);
+                        EvaluateListBinding(item, memberBinding as MemberListBinding, references, context);
                         break;
                     case MemberBindingType.MemberBinding:
-                        EvaluateMemberBinding(item, memberBinding as MemberMemberBinding, references);
+                        EvaluateMemberBinding(item, memberBinding as MemberMemberBinding, references, context);
                         break;
                 }
 
@@ -41,18 +42,19 @@ namespace GlobalsFramework.Linq.MemberBindingEvaluation
         }
 
         private static void EvaluateMemeberAssignment(EvaluatedMemberBinding result, MemberAssignment assignment,
-            List<NodeReference> references)
+            List<NodeReference> references, DataContext context)
         {
-            var processingResult = ExpressionProcessingHelper.ProcessExpression(assignment.Expression, references);
+            var processingResult = ExpressionProcessingHelper.ProcessExpression(assignment.Expression, references, context);
             result.AddResult(LoadData(processingResult, assignment.Expression.Type));
         }
 
-        private static void EvaluateListBinding(EvaluatedMemberBinding result, MemberListBinding listBinding, List<NodeReference> references)
+        private static void EvaluateListBinding(EvaluatedMemberBinding result, MemberListBinding listBinding,
+            List<NodeReference> references, DataContext context)
         {
             foreach (var initializer in listBinding.Initializers)
             {
                 var processingResults = initializer.Arguments
-                    .Select(a => LoadData(ExpressionProcessingHelper.ProcessExpression(a, references), a.Type))
+                    .Select(a => LoadData(ExpressionProcessingHelper.ProcessExpression(a, references, context), a.Type))
                     .ToList();
 
                 if (processingResults.Any(r => !r.IsSuccess))
@@ -65,9 +67,10 @@ namespace GlobalsFramework.Linq.MemberBindingEvaluation
             }
         }
 
-        private static void EvaluateMemberBinding(EvaluatedMemberBinding result, MemberMemberBinding memberBinding, List<NodeReference> references)
+        private static void EvaluateMemberBinding(EvaluatedMemberBinding result, MemberMemberBinding memberBinding,
+            List<NodeReference> references, DataContext context)
         {
-            var childMemberBindings = EvaluateBindings(memberBinding.Bindings.ToList(), references);
+            var childMemberBindings = EvaluateBindings(memberBinding.Bindings.ToList(), references, context);
             if (childMemberBindings.Any(b => !b.IsSuccess))
             {
                 result.MarkUnsuccessful();

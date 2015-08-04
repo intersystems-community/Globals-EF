@@ -18,12 +18,12 @@ namespace GlobalsFramework.Linq.QueryProcessing.OrderingQueries
             return methodName == "ThenBy" || methodName == "ThenByDescending";
         }
 
-        public override ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
+        public override ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult, DataContext context)
         {
-            return ProcessThenBy(query, parentResult, query.Method.Name == "ThenByDescending");
+            return ProcessThenBy(query, parentResult, context, query.Method.Name == "ThenByDescending");
         }
 
-        private ProcessingResult ProcessThenBy(MethodCallExpression query, ProcessingResult parentResult, bool descending)
+        private ProcessingResult ProcessThenBy(MethodCallExpression query, ProcessingResult parentResult, DataContext context, bool descending)
         {
             if ((!parentResult.IsDeferred()) && (parentResult.Result is IOrderedQueryable))
                 return ProcessingResult.Unsuccessful;
@@ -31,9 +31,9 @@ namespace GlobalsFramework.Linq.QueryProcessing.OrderingQueries
             var keySelector = GetKeySelector(query);
             var comparer = GetComparer(query);
 
-            var keysResult = GetKeys(keySelector, parentResult);
+            var keysResult = GetKeys(keySelector, parentResult, context);
             if (!keysResult.IsSuccess)
-                return ProcessByDefault(query, parentResult);
+                return ProcessByDefault(query, parentResult, context);
           
             var keyType = keySelector.ReturnType;
             var sourceType = parentResult.IsDeferred()
@@ -50,10 +50,10 @@ namespace GlobalsFramework.Linq.QueryProcessing.OrderingQueries
             return new ProcessingResult(true, orderedEnumerable);
         }
 
-        private static ProcessingResult ProcessByDefault(MethodCallExpression query, ProcessingResult parentResult)
+        private static ProcessingResult ProcessByDefault(MethodCallExpression query, ProcessingResult parentResult, DataContext context)
         {
             if (!parentResult.IsDeferred())
-                return QueryProcessingHelper.ProcessQueryByDefault(query, parentResult);
+                return QueryProcessingHelper.ProcessQueryByDefault(query, parentResult, context);
 
             Func<IDeferredOrderedEnumerable, IOrderedEnumerable<RuntimeType1>> func = GetLoadedOrderedEnumerable<RuntimeType1>;
 
@@ -61,7 +61,7 @@ namespace GlobalsFramework.Linq.QueryProcessing.OrderingQueries
                 new RuntimeTypeBinding {new RuntimeType1(QueryProcessingHelper.GetSourceParameterType(query))},
                 parentResult.Result);
 
-            return QueryProcessingHelper.ProcessQueryByDefault(query, new ProcessingResult(true, loadedEnumerable));
+            return QueryProcessingHelper.ProcessQueryByDefault(query, new ProcessingResult(true, loadedEnumerable), context);
         }
 
         private static OrderedEnumerable<TSource> AppendOrderedEnumerable<TSource, TKey>(OrderedEnumerable<TSource> parent,

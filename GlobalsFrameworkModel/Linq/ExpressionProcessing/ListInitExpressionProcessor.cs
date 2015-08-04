@@ -15,17 +15,17 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             return expression.NodeType == ExpressionType.ListInit;
         }
 
-        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references)
+        public ProcessingResult ProcessExpression(Expression expression, List<NodeReference> references, DataContext context)
         {
             var listInitExpression = expression as ListInitExpression;
             if (listInitExpression == null)
                 return ProcessingResult.Unsuccessful;
 
-            var instanceResult = ExpressionProcessingHelper.ProcessExpression(listInitExpression.NewExpression, references);
+            var instanceResult = ExpressionProcessingHelper.ProcessExpression(listInitExpression.NewExpression, references, context);
             if (instanceResult == null)
                 return ProcessingResult.Unsuccessful;
 
-            var evaluatedInitializers = EvaluateInitializers(listInitExpression.Initializers, references);
+            var evaluatedInitializers = EvaluateInitializers(listInitExpression.Initializers, references, context);
 
             var isSuccess = evaluatedInitializers.All(i => i.Arguments.All(a => a.IsSuccess));
             if (!isSuccess)
@@ -36,7 +36,7 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             if (instanceResult.IsSingleItem && !isSingleInitializers)
             {
                 instanceResult = ExpressionProcessingHelper.CopyInstances(instanceResult, references.Count,
-                    () => ExpressionProcessingHelper.ProcessExpression(listInitExpression.NewExpression, references).Result);
+                    () => ExpressionProcessingHelper.ProcessExpression(listInitExpression.NewExpression, references, context).Result);
             }
 
             instanceResult = evaluatedInitializers.Aggregate(instanceResult,
@@ -45,14 +45,15 @@ namespace GlobalsFramework.Linq.ExpressionProcessing
             return instanceResult;
         }
 
-        private static List<EvaluatedListInitializer> EvaluateInitializers(IEnumerable<ElementInit> initializers, List<NodeReference> references)
+        private static List<EvaluatedListInitializer> EvaluateInitializers(IEnumerable<ElementInit> initializers,
+            List<NodeReference> references, DataContext context)
         {
             var result = new List<EvaluatedListInitializer>();
 
             foreach (var initializer in initializers)
             {
                 var processingResults = initializer.Arguments
-                    .Select(a => LoadData(ExpressionProcessingHelper.ProcessExpression(a, references), a.Type))
+                    .Select(a => LoadData(ExpressionProcessingHelper.ProcessExpression(a, references, context), a.Type))
                     .ToList();
 
                 result.Add(new EvaluatedListInitializer(initializer.AddMethod, processingResults));

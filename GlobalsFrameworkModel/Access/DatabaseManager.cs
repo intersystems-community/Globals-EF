@@ -39,7 +39,7 @@ namespace GlobalsFramework.Access
             }
         }
 
-        internal static IEnumerable<NodeReference> GetEntitiesNodes(NodeReference node, Connection connection)
+        internal static IEnumerable<NodeReference> GetEntitiesNodes(NodeReference node, DataContext context)
         {
             var result = new List<NodeReference>();
 
@@ -51,7 +51,7 @@ namespace GlobalsFramework.Access
             {
                 if (!string.Equals(subscript, IdentityValueSubscriptName))
                 {
-                    var entityNode = connection.CreateNodeReference(node.GetName());
+                    var entityNode = context.CreateNodeReference(node.GetName());
                     entityNode.AppendSubscript(subscript);
                     result.Add(entityNode);
                 }

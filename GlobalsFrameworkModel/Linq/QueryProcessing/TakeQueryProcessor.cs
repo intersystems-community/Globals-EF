@@ -15,7 +15,7 @@ namespace GlobalsFramework.Linq.QueryProcessing
             return query.Method.Name == "Take";
         }
 
-        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
+        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult, DataContext context)
         {
             var items = parentResult.GetItems();
             var enumerator = items.GetEnumerator();

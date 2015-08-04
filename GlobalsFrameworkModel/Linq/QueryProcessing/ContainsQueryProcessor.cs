@@ -14,7 +14,7 @@ namespace GlobalsFramework.Linq.QueryProcessing
             return query.Method.Name == "Contains";
         }
 
-        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
+        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult, DataContext context)
         {
             var elementType = QueryProcessingHelper.GetSourceParameterType(query);
 

@@ -7,14 +7,14 @@ using GlobalsFramework.Linq.Helpers;
 
 namespace GlobalsFramework.Linq.QueryProcessing
 {
-    internal sealed class ConcatQueryProcessor:IQueryProcessor
+    internal sealed class ConcatQueryProcessor : IQueryProcessor
     {
         public bool CanProcess(MethodCallExpression query)
         {
             return query.Method.Name == "Concat";
         }
 
-        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
+        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult, DataContext context)
         {
             var source1 = parentResult.GetLoadedItems(QueryProcessingHelper.GetSourceParameterType(query));
             var constantArgument = query.Arguments[1] as ConstantExpression;

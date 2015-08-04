@@ -12,13 +12,13 @@ namespace GlobalsFramework.Linq.QueryProcessing
             return query.Method.Name == "All";
         }
 
-        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult)
+        public ProcessingResult ProcessQuery(MethodCallExpression query, ProcessingResult parentResult, DataContext context)
         {
             if (!parentResult.IsDeferred())
                 return ProcessingResult.Unsuccessful;
 
             var predicate = query.Arguments[1];
-            var predicateResult = ExpressionProcessingHelper.ProcessPredicate(predicate, parentResult.GetDeferredItems());
+            var predicateResult = ExpressionProcessingHelper.ProcessPredicate(predicate, parentResult.GetDeferredItems(), context);
 
             if (!predicateResult.IsSuccess)
                 return ProcessingResult.Unsuccessful;
