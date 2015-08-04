@@ -53,7 +53,7 @@ Note that in database stored only those properties, which meet following require
 ```c#
     public string Name { get; set; }  
 ```
-Indicate that property of entity (column) must be stored in a database with another name, shorter, of example. If value is not provided, than used name of property in entity class. For example, in this case
+Indicate that property of entity (column) must be stored in a database with another name, shorter, of example. If value is not provided, then will be used name of property in entity class. For example, in this case
 ```c#
 [Column(Name = "Id")]  
 public int IdentificationNumber { get; set; }  
