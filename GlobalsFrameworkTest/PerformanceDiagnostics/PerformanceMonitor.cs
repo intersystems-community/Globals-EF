@@ -10,18 +10,21 @@ namespace GlobalsFrameworkTest.PerformanceDiagnostics
     {
         internal void TestPerformance(int milliseconds = 1000)
         {
+            ClearTestData();
             SetUpTestData();
 
             var methods = GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
                 .Where(m => m.GetCustomAttribute<PerfWatchAttribute>() != null)
                 .ToList();
 
-            ExecuteInContext((context) =>
+            foreach (var methodInfo in methods)
             {
-                foreach (var methodInfo in methods)
-                    Console.WriteLine("{0} {1}", methodInfo.Name,
-                        GetExecutedTimes(() => methodInfo.Invoke(this, new object[] {context}), milliseconds));
-            });
+                var method = methodInfo;
+                var executedTimes = 0;
+
+                ExecuteInContext(context => executedTimes = GetExecutedTimes(() => method.Invoke(this, new object[] {context}), milliseconds));
+                Console.WriteLine("{0} {1}", method.Name, executedTimes);
+            }
 
             ClearTestData();
         }

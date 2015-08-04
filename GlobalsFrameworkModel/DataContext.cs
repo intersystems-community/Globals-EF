@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -13,20 +14,23 @@ namespace GlobalsFramework
     public class DataContext : IDisposable
     {
         private readonly Connection _connection;
-        private readonly Queue<IEntityAction> _actionsQueue;
+        private readonly ConcurrentQueue<IEntityAction> _actionsQueue;
+        private readonly ConcurrentBag<NodeReference> _createdReferences; 
 
         protected DataContext()
         {
             InitializeDbSetMembers();
             _connection = ConnectionManager.GetOpenedConnectionSyncronously();
-            _actionsQueue = new Queue<IEntityAction>();
+            _actionsQueue = new ConcurrentQueue<IEntityAction>();
+            _createdReferences = new ConcurrentBag<NodeReference>();
         }
 
         protected DataContext(string namespc, string user, string password)
         {
             InitializeDbSetMembers();
             _connection = ConnectionManager.GetOpenedConnectionSyncronously(namespc, user, password);
-            _actionsQueue = new Queue<IEntityAction>();
+            _actionsQueue = new ConcurrentQueue<IEntityAction>();
+            _createdReferences = new ConcurrentBag<NodeReference>();
         }
 
         public void Dispose()
@@ -43,7 +47,8 @@ namespace GlobalsFramework
         {
             while (_actionsQueue.Count > 0)
             {
-                var action = _actionsQueue.Dequeue();
+                IEntityAction action;
+                _actionsQueue.TryDequeue(out action);
                 action.Execute();
             }
         }
@@ -60,12 +65,16 @@ namespace GlobalsFramework
 
         internal NodeReference CreateNodeReference(string name)
         {
-            return _connection.CreateNodeReference(name);
+            var result = _connection.CreateNodeReference(name);
+            RegisterOpenedReference(result);
+            return result;
         }
 
         internal NodeReference CreateNodeReference()
         {
-            return _connection.CreateNodeReference();
+            var result = _connection.CreateNodeReference();
+            RegisterOpenedReference(result);
+            return result;
         }
 
         internal NodeReference CopyReference(NodeReference reference)
@@ -105,6 +114,7 @@ namespace GlobalsFramework
             if (disposing)
             {
                 _connection.Close();
+                CloseReferences();
             }
         }
 
@@ -150,6 +160,19 @@ namespace GlobalsFramework
                 var instance = Activator.CreateInstance(instanceType, constructorBindingFlags, null, new object[] { this }, null);
 
                 dbSetProperty.SetValue(this, instance, null);
+            }
+        }
+
+        private void RegisterOpenedReference(NodeReference reference)
+        {
+            _createdReferences.Add(reference);
+        }
+
+        private void CloseReferences()
+        {
+            foreach (var createdReference in _createdReferences)
+            {
+                createdReference.Close();
             }
         }
     }

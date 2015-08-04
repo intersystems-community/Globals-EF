@@ -76,7 +76,7 @@ namespace GlobalsFramework.Utils.TypeDescription
                 }
                 else if (IsSimpleNullableType(property.PropertyType))
                 {
-                    result.Columns.Add(new EntityTypeDescription()
+                    result.Columns.Add(new EntityTypeDescription
                     {
                         IsNullableColumn = true,
                         IsSimpleColumn = true,
@@ -86,7 +86,7 @@ namespace GlobalsFramework.Utils.TypeDescription
                 }
                 else if (IsArrayType(property.PropertyType))
                 {
-                    result.Columns.Add(new EntityTypeDescription()
+                    result.Columns.Add(new EntityTypeDescription
                     {
                         IsArrayColumn = true,
                         ColumnAttribute = attribute,
@@ -95,7 +95,7 @@ namespace GlobalsFramework.Utils.TypeDescription
                 }
                 else if (IsSupportedEnumerable(property.PropertyType))
                 {
-                    result.Columns.Add(new EntityTypeDescription()
+                    result.Columns.Add(new EntityTypeDescription
                     {
                         IsEnumerableColumn = true,
                         ColumnAttribute = attribute,
