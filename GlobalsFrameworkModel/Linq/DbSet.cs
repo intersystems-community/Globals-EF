@@ -10,6 +10,10 @@ using InterSystems.Globals;
 
 namespace GlobalsFramework.Linq
 {
+    /// <summary>
+    ///A <see cref="T:GlobalsFramework.Linq.DbSet`1"/> represents an entity that is used for create, read, update, and delete operations to the database.
+    /// </summary>
+    /// <typeparam name="TEntity">The type that defines the set.</typeparam>
     public sealed class DbSet<TEntity> : IDbSet<TEntity>, IOrderedQueryable<TEntity>, IQueryProvider where TEntity : class
     {
         private readonly string _dbSetName;
@@ -17,8 +21,6 @@ namespace GlobalsFramework.Linq
         private DbSet(DataContext context)
         {
             Context = context;
-            Expression = Expression.Constant(this);
-            Provider = this;
 
             _dbSetName = typeof(TEntity).Name;
             var dbSetAttribute = EntityTypeDescriptor.GetTypeDescription(typeof(TEntity)).DbSetAttribute;
@@ -26,19 +28,25 @@ namespace GlobalsFramework.Linq
                 _dbSetName = dbSetAttribute.Name ?? _dbSetName;
         }
 
+        /// <summary>
+        /// Gets the <see cref="T:GlobalsFramework.DataContext"/> that has been used to retrieve this <see cref="T:GlobalsFramework.Linq.DbSet`1"/>.
+        /// </summary>
         public DataContext Context { get; private set; }
 
-        public Expression Expression { get; private set; }
-
-        public Type ElementType
+        Expression IQueryable.Expression
         {
-            get
-            {
-                return typeof(TEntity);
-            }
+            get { return Expression.Constant(this); }
         }
 
-        public IQueryProvider Provider { get; private set; }
+        Type IQueryable.ElementType
+        {
+            get { return typeof(TEntity); }
+        }
+
+        IQueryProvider IQueryable.Provider
+        {
+            get { return this; }
+        }
 
         public void InsertOnSubmit(TEntity entity)
         {
@@ -79,39 +87,39 @@ namespace GlobalsFramework.Linq
             }
         }
 
-        public IQueryable CreateQuery(Expression expression)
+        internal NodeReference CreateNodeReference()
+        {
+            return Context.CreateNodeReference(_dbSetName);
+        }
+
+        IQueryable IQueryProvider.CreateQuery(Expression expression)
         {
             return new EntityQuery<TEntity>(this, expression);
         }
 
-        public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
+        IQueryable<TElement> IQueryProvider.CreateQuery<TElement>(Expression expression)
         {
             return new EntityQuery<TElement>(this, expression);
         }
 
-        public object Execute(Expression expression)
+        object IQueryProvider.Execute(Expression expression)
         {
             return QueryProcessingHelper.ProcessQueries(CreateNodeReference(), Context, expression);
         }
 
-        public TResult Execute<TResult>(Expression expression)
+        TResult IQueryProvider.Execute<TResult>(Expression expression)
         {
-            return (TResult)Execute(expression);
+            return (TResult) ((IQueryProvider) this).Execute(expression);
         }
 
-        public IEnumerator<TEntity> GetEnumerator()
+        IEnumerator<TEntity> IEnumerable<TEntity>.GetEnumerator()
         {
             return this.Select(p => p).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
-        }
-
-        internal NodeReference CreateNodeReference()
-        {
-            return Context.CreateNodeReference(_dbSetName);
+            return ((IEnumerable<TEntity>)this).GetEnumerator();
         }
     }
 }

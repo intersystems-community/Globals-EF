@@ -99,6 +99,9 @@ namespace GlobalsFrameworkTest.Tests
 
                 var bData8 = context.ADbSet.Select(b => 5).ToList();
                 Assert.AreEqual(5, bData8[1]);
+
+                var bData9 = context.ADbSet.ToList();
+                Assert.AreEqual(2, bData9.Count);
             }
         }
 
