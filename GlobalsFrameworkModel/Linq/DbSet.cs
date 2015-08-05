@@ -48,11 +48,19 @@ namespace GlobalsFramework.Linq
             get { return this; }
         }
 
+        /// <summary>
+        /// Adds an entity in a pending insert state.
+        /// </summary>
+        /// <param name="entity">The entity to be inserted.</param>
         public void InsertOnSubmit(TEntity entity)
         {
             Context.RegisterAction(new InsertAction<TEntity>(entity, this));
         }
 
+        /// <summary>
+        /// Puts all entities from the collection into a pending insert state.
+        /// </summary>
+        /// <param name="entities">The entities to insert.</param>
         public void InsertAllOnSubmit(IEnumerable<TEntity> entities)
         {
             foreach (var entity in entities)
@@ -61,11 +69,19 @@ namespace GlobalsFramework.Linq
             }
         }
 
+        /// <summary>
+        /// Adds an entity in a pending update state.
+        /// </summary>
+        /// <param name="entity">The entity to be updated.</param>
         public void UpdateOnSubmit(TEntity entity)
         {
             Context.RegisterAction(new UpdateAction<TEntity>(entity, this));
         }
 
+        /// <summary>
+        /// Puts all entities from the collection into a pending update state.
+        /// </summary>
+        /// <param name="entities">The entities to update.</param>
         public void UpdateAllOnSubmit(IEnumerable<TEntity> entities)
         {
             foreach (var entity in entities)
@@ -74,11 +90,19 @@ namespace GlobalsFramework.Linq
             }
         }
 
+        /// <summary>
+        /// Adds an entity in a pending delete state.
+        /// </summary>
+        /// <param name="entity">The entity to be deleted.</param>
         public void DeleteOnSubmit(TEntity entity)
         {
             Context.RegisterAction(new DeleteAction<TEntity>(entity, this));
         }
 
+        /// <summary>
+        /// Puts all entities from the collection into a pending delete state.
+        /// </summary>
+        /// <param name="entities">The entities to delete.</param>
         public void DeleteAllOnSubmit(IEnumerable<TEntity> entities)
         {
             foreach (var entity in entities)
