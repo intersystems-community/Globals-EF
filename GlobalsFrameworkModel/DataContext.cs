@@ -22,7 +22,7 @@ namespace GlobalsFramework
         private readonly ConcurrentBag<NodeReference> _createdReferences; 
 
         /// <summary>
-        /// Initializes a new instance of the System.Data.Linq.DataContext class, creates connection without security parameters (minimum security level).
+        /// Initializes a new instance of the <see cref="T:GlobalsFramework.DataContext"/> class, creates connection without security parameters (minimum security level).
         /// </summary>
         protected DataContext()
         {
@@ -33,7 +33,7 @@ namespace GlobalsFramework
         }
 
         /// <summary>
-        /// Initializes a new instance of the System.Data.Linq.DataContext class, creates connection with specific security parameters.
+        /// Initializes a new instance of the <see cref="T:GlobalsFramework.DataContext"/> class, creates connection with specific security parameters.
         /// </summary>
         /// <param name="namespc">the namespace to which to connect.</param>
         /// <param name="user">name of user connecting.</param>
