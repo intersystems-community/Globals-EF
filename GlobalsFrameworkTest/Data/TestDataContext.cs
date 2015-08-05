@@ -70,6 +70,9 @@ namespace GlobalsFrameworkTest.Data
         [Column]
         public TestEnum E { get; set; }
 
+        [Column]
+        public object Obj { get; set; }
+
         public TestA(int i) { }
 
         public static implicit operator int(TestA a)

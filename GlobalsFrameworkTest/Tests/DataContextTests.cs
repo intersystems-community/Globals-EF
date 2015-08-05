@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GlobalsFramework.Exceptions;
 using GlobalsFrameworkTest.Data;
@@ -55,6 +56,7 @@ namespace GlobalsFrameworkTest.Tests
                 aData1.D = 45.77;
                 aData1.C2 = new TestC {Id = 3};
                 bData1.Array2 = new[] { new TestC { Id = 6 } };
+                aData1.Obj = 5;
 
                 context.ADbSet.UpdateOnSubmit(aData1);
                 context.BDbSet.UpdateOnSubmit(bData1);
@@ -63,11 +65,13 @@ namespace GlobalsFrameworkTest.Tests
 
                 var aData2 = context.ADbSet.Select(a => a.D).Single();
                 var aData22 = context.ADbSet.Select(a => a.C2.Value.Id).Single();
+                var aData21 = context.ADbSet.Select(a => a.Obj).Single();
                 var bData2 = context.BDbSet.Select(b => b.Array2).First(arr => arr.Length > 0);
 
                 Assert.AreEqual(aData2, 45.77);
                 Assert.AreEqual(aData22, 3);
                 Assert.AreEqual(bData2[0].Id, 6);
+                Assert.AreEqual(5, Convert.ToInt32(aData21));
 
                 context.ADbSet.UpdateOnSubmit(_testEntity);
                 context.BDbSet.UpdateOnSubmit(_testEntity.TestBProperty);

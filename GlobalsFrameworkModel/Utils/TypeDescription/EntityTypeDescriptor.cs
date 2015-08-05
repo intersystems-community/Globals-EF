@@ -17,6 +17,7 @@ namespace GlobalsFramework.Utils.TypeDescription
             if (type.IsPrimitive ||
                 type.IsEnum ||
                 type == typeof(string) ||
+                type == typeof(object) ||
                 type == typeof(DateTime) ||
                 type == typeof(DateTimeOffset))
                 return true;
