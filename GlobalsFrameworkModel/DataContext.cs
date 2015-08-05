@@ -11,12 +11,19 @@ using InterSystems.Globals;
 
 namespace GlobalsFramework
 {
+    /// <summary>
+    /// <see cref="T:GlobalsFramework.DataContext"/> represents the main entry point for the LINQ to Globals, provides connection to the database.
+    /// Must be created derived class with set of <see cref="T:GlobalsFramework.Linq.DbSet`1"/> public properties or fields for getting access to database data.
+    /// </summary>
     public class DataContext : IDisposable
     {
         private readonly Connection _connection;
         private readonly ConcurrentQueue<IEntityAction> _actionsQueue;
         private readonly ConcurrentBag<NodeReference> _createdReferences; 
 
+        /// <summary>
+        /// Initializes a new instance of the System.Data.Linq.DataContext class, creates connection without security parameters (minimum security level).
+        /// </summary>
         protected DataContext()
         {
             InitializeDbSetMembers();
@@ -25,6 +32,12 @@ namespace GlobalsFramework
             _createdReferences = new ConcurrentBag<NodeReference>();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the System.Data.Linq.DataContext class, creates connection with specific security parameters.
+        /// </summary>
+        /// <param name="namespc">the namespace to which to connect.</param>
+        /// <param name="user">name of user connecting.</param>
+        /// <param name="password">password of user connecting</param>
         protected DataContext(string namespc, string user, string password)
         {
             InitializeDbSetMembers();
@@ -33,16 +46,17 @@ namespace GlobalsFramework
             _createdReferences = new ConcurrentBag<NodeReference>();
         }
 
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="T:GlobalsFramework.DataContext"/> class.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
         }
 
-        public void Close()
-        {
-            Dispose();
-        }
-
+        /// <summary>
+        /// Computes the set of modified objects to be inserted, updated, or deleted, and executes the appropriate commands to implement the changes to the database.
+        /// </summary>
         public void SubmitChanges()
         {
             while (_actionsQueue.Count > 0)
@@ -109,6 +123,10 @@ namespace GlobalsFramework
             return references.Select(CopyReference).ToList();
         }
 
+        /// <summary>
+        /// Releases the unmanaged resources used by the <see cref="T:GlobalsFramework.DataContext"/> class and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
